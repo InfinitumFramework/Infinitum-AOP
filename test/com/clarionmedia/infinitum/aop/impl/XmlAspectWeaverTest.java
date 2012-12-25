@@ -183,6 +183,12 @@ public class XmlAspectWeaverTest {
 	public void testWeave_within() throws SecurityException, NoSuchMethodException {
 		// Setup
 		adviceList.add(withinAdvice);
+		mockAspect.setAdvice(adviceList);
+		mockAspect.setClassName("com.clarionmedia.infinitum.aop.impl.XmlAspectWeaverTest$MockAspect");
+		mockAspect.setId("advice");
+		List<XmlAspect> aspects = new ArrayList<XmlAspect>();
+		aspects.add(mockAspect);
+		aspectWeaver.setAspects(aspects);
 		Method advice = MockAspect.class.getMethod("beforeAdvice_within", JoinPoint.class);
 		when(mockClassReflector.getMethod(null, "beforeAdvice_within", JoinPoint.class)).thenReturn(advice);
 		when(mockClassReflector.getClassInstance(any(Class.class))).thenReturn(new MockAspect());
@@ -204,6 +210,12 @@ public class XmlAspectWeaverTest {
 	public void testWeave_beansWithMethod() throws SecurityException, NoSuchMethodException {
 		// Setup
 		adviceList.add(beansAdviceWithMethod);
+		mockAspect.setAdvice(adviceList);
+		mockAspect.setClassName("com.clarionmedia.infinitum.aop.impl.XmlAspectWeaverTest$MockAspect");
+		mockAspect.setId("advice");
+		List<XmlAspect> aspects = new ArrayList<XmlAspect>();
+		aspects.add(mockAspect);
+		aspectWeaver.setAspects(aspects);
 		Method advice = MockAspect.class.getMethod("beforeAdvice_beans", JoinPoint.class);
 		Method toString = Object.class.getMethod("toString");
 		when(mockClassReflector.getMethod(null, "beforeAdvice_beans", JoinPoint.class)).thenReturn(advice);
@@ -226,6 +238,12 @@ public class XmlAspectWeaverTest {
 	public void testWeave_beansWithParameterizedMethod() throws SecurityException, NoSuchMethodException {
 		// Setup
 		adviceList.add(beansAdviceWithParameterizedMethod);
+		mockAspect.setAdvice(adviceList);
+		mockAspect.setClassName("com.clarionmedia.infinitum.aop.impl.XmlAspectWeaverTest$MockAspect");
+		mockAspect.setId("advice");
+		List<XmlAspect> aspects = new ArrayList<XmlAspect>();
+		aspects.add(mockAspect);
+		aspectWeaver.setAspects(aspects);
 		Method advice = MockAspect.class.getMethod("beforeAdvice_beans", JoinPoint.class);
 		Method add = ArrayList.class.getMethod("add", Object.class);
 		when(mockClassReflector.getMethod(null, "beforeAdvice_beans", JoinPoint.class)).thenReturn(advice);
@@ -249,6 +267,12 @@ public class XmlAspectWeaverTest {
 	public void testWeave_beansWithParameterizedMethod_notFoundThrowsException() throws SecurityException, NoSuchMethodException {
 		// Setup
 		adviceList.add(beansAdviceWithParameterizedMethod);
+		mockAspect.setAdvice(adviceList);
+		mockAspect.setClassName("com.clarionmedia.infinitum.aop.impl.XmlAspectWeaverTest$MockAspect");
+		mockAspect.setId("advice");
+		List<XmlAspect> aspects = new ArrayList<XmlAspect>();
+		aspects.add(mockAspect);
+		aspectWeaver.setAspects(aspects);
 		Method advice = MockAspect.class.getMethod("beforeAdvice_beans", JoinPoint.class);
 		when(mockClassReflector.getMethod(null, "beforeAdvice_beans", JoinPoint.class)).thenReturn(advice);
 		when(mockClassReflector.getClassInstance(any(Class.class))).thenReturn(new MockAspect());
@@ -268,6 +292,12 @@ public class XmlAspectWeaverTest {
 	public void testWeave_beansClassScope() throws SecurityException, NoSuchMethodException {
 		// Setup
 		adviceList.add(beansAdviceClassScope);
+		mockAspect.setAdvice(adviceList);
+		mockAspect.setClassName("com.clarionmedia.infinitum.aop.impl.XmlAspectWeaverTest$MockAspect");
+		mockAspect.setId("advice");
+		List<XmlAspect> aspects = new ArrayList<XmlAspect>();
+		aspects.add(mockAspect);
+		aspectWeaver.setAspects(aspects);
 		Method advice = MockAspect.class.getMethod("aroundAdvice_beans", ProceedingJoinPoint.class);
 		Method toString = Object.class.getMethod("toString");
 		when(mockClassReflector.getMethod(null, "aroundAdvice_beans", ProceedingJoinPoint.class)).thenReturn(advice);
@@ -290,6 +320,12 @@ public class XmlAspectWeaverTest {
 	public void testWeave_beansWithBadMethodThrowsException() throws SecurityException, NoSuchMethodException {
 		// Setup
 		adviceList.add(beansAdviceWithBadMethod);
+		mockAspect.setAdvice(adviceList);
+		mockAspect.setClassName("com.clarionmedia.infinitum.aop.impl.XmlAspectWeaverTest$MockAspect");
+		mockAspect.setId("advice");
+		List<XmlAspect> aspects = new ArrayList<XmlAspect>();
+		aspects.add(mockAspect);
+		aspectWeaver.setAspects(aspects);
 		Method advice = MockAspect.class.getMethod("beforeAdvice_beans", JoinPoint.class);
 		Method toString = Object.class.getMethod("toString");
 		when(mockClassReflector.getMethod(null, "beforeAdvice_beans", JoinPoint.class)).thenReturn(advice);
@@ -309,6 +345,12 @@ public class XmlAspectWeaverTest {
 	public void testWeave_beansWithInvalidPointcutThrowsException_malformedMethod() throws SecurityException, NoSuchMethodException {
 		// Setup
 		adviceList.add(beansAdviceInvalidPointcut1);
+		mockAspect.setAdvice(adviceList);
+		mockAspect.setClassName("com.clarionmedia.infinitum.aop.impl.XmlAspectWeaverTest$MockAspect");
+		mockAspect.setId("advice");
+		List<XmlAspect> aspects = new ArrayList<XmlAspect>();
+		aspects.add(mockAspect);
+		aspectWeaver.setAspects(aspects);
 		Method advice = MockAspect.class.getMethod("beforeAdvice_beans", JoinPoint.class);
 		Method toString = Object.class.getMethod("toString");
 		when(mockClassReflector.getMethod(null, "beforeAdvice_beans", JoinPoint.class)).thenReturn(advice);
@@ -328,6 +370,12 @@ public class XmlAspectWeaverTest {
 	public void testWeave_beansWithInvalidPointcutThrowsException_missingMethod() throws SecurityException, NoSuchMethodException {
 		// Setup
 		adviceList.add(beansAdviceInvalidPointcut2);
+		mockAspect.setAdvice(adviceList);
+		mockAspect.setClassName("com.clarionmedia.infinitum.aop.impl.XmlAspectWeaverTest$MockAspect");
+		mockAspect.setId("advice");
+		List<XmlAspect> aspects = new ArrayList<XmlAspect>();
+		aspects.add(mockAspect);
+		aspectWeaver.setAspects(aspects);
 		Method advice = MockAspect.class.getMethod("beforeAdvice_beans", JoinPoint.class);
 		Method toString = Object.class.getMethod("toString");
 		when(mockClassReflector.getMethod(null, "beforeAdvice_beans", JoinPoint.class)).thenReturn(advice);
@@ -347,6 +395,12 @@ public class XmlAspectWeaverTest {
 	public void testWeave_beansWithWildcardMethod() throws SecurityException, NoSuchMethodException {
 		// Setup
 		adviceList.add(beansAdviceWithWildcardMethod);
+		mockAspect.setAdvice(adviceList);
+		mockAspect.setClassName("com.clarionmedia.infinitum.aop.impl.XmlAspectWeaverTest$MockAspect");
+		mockAspect.setId("advice");
+		List<XmlAspect> aspects = new ArrayList<XmlAspect>();
+		aspects.add(mockAspect);
+		aspectWeaver.setAspects(aspects);
 		Method advice = MockAspect.class.getMethod("beforeAdvice_beans", JoinPoint.class);
 		List<Method> methods = new ArrayList<Method>();
 		methods.add(ArrayList.class.getMethod("add", Object.class));
