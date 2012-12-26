@@ -35,6 +35,7 @@ import com.clarionmedia.infinitum.aop.impl.AnnotationsAspectWeaver;
 import com.clarionmedia.infinitum.aop.impl.ConfigurableAspectFactory;
 import com.clarionmedia.infinitum.aop.impl.XmlAspectWeaver;
 import com.clarionmedia.infinitum.context.InfinitumContext;
+import com.clarionmedia.infinitum.context.RestfulContext;
 import com.clarionmedia.infinitum.context.impl.XmlApplicationContext;
 import com.clarionmedia.infinitum.context.impl.XmlAspect;
 import com.clarionmedia.infinitum.di.AbstractBeanDefinition;
@@ -169,6 +170,11 @@ public class XmlInfinitumAopContext implements InfinitumAopContext {
 		return mParentContext;
 	}
 	
+	@Override
+	public RestfulContext getRestContext() {
+		return mParentContext.getRestContext();
+	}
+	
 	private Set<Class<?>> getAndRemoveAspects(Collection<Class<?>> components) {
 		Set<Class<?>> aspects = new HashSet<Class<?>>();
 		Iterator<Class<?>> iter = components.iterator();
@@ -181,5 +187,6 @@ public class XmlInfinitumAopContext implements InfinitumAopContext {
 		}
 		return aspects;
 	}
+
 
 }
