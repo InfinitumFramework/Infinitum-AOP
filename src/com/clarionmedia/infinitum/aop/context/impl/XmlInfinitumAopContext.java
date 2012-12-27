@@ -63,6 +63,13 @@ public class XmlInfinitumAopContext implements InfinitumAopContext {
 	private List<InfinitumContext> mChildContexts;
 	private AspectFactory mAspectFactory;
 
+	/**
+	 * Creates a new {@code XmlInfinitumAopContext} instance as a child of the
+	 * given {@link XmlApplicationContext}.
+	 * 
+	 * @param parentContext
+	 *            the parent of this context
+	 */
 	public XmlInfinitumAopContext(XmlApplicationContext parentContext) {
 		mParentContext = parentContext;
 		mChildContexts = new ArrayList<InfinitumContext>();
