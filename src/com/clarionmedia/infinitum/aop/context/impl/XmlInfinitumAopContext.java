@@ -33,11 +33,14 @@ import android.content.Context;
 
 import com.clarionmedia.infinitum.aop.AspectDefinition;
 import com.clarionmedia.infinitum.aop.AspectDefinition.AdviceDefinition;
+import com.clarionmedia.infinitum.aop.AspectDefinition.AdviceDefinition.AdviceQualifier;
 import com.clarionmedia.infinitum.aop.AspectTransformer;
 import com.clarionmedia.infinitum.aop.JoinPoint;
 import com.clarionmedia.infinitum.aop.JoinPoint.AdviceLocation;
 import com.clarionmedia.infinitum.aop.ProceedingJoinPoint;
 import com.clarionmedia.infinitum.aop.annotation.Aspect;
+import com.clarionmedia.infinitum.aop.annotation.Cache;
+import com.clarionmedia.infinitum.aop.annotation.EvictCache;
 import com.clarionmedia.infinitum.aop.context.InfinitumAopContext;
 import com.clarionmedia.infinitum.aop.impl.CacheAspect;
 import com.clarionmedia.infinitum.aop.impl.GenericAspectTransformer;
@@ -199,25 +202,42 @@ public class XmlInfinitumAopContext implements InfinitumAopContext {
 	}
 
 	private void addCachingAdvice(Set<AspectDefinition> aspects) {
-		ClassReflector reflector = new DefaultClassReflector();
+		final ClassReflector reflector = new DefaultClassReflector();
 		AspectDefinition cachingAspect = new AspectDefinition();
 		cachingAspect.setName(StringUtil.toCamelCase(CacheAspect.class.getSimpleName()));
 		cachingAspect.setType(CacheAspect.class);
 		List<AdviceDefinition> adviceList = new ArrayList<AdviceDefinition>();
+		
+		// Create Cache advice
 		AdviceDefinition cacheAdvice = new AdviceDefinition();
 		cacheAdvice.setType(AdviceLocation.Around);
 		cacheAdvice.setPointcutType("within");
 		cacheAdvice.setPointcutValue(new String[] { "*" });
 		Method method = reflector.getMethod(CacheAspect.class, "cache", ProceedingJoinPoint.class);
 		cacheAdvice.setMethod(method);
+		cacheAdvice.setQualifier(new AdviceQualifier() {
+			@Override
+			public boolean qualifies(Class<?> clazz) {
+				return reflector.containsMethodAnnotation(clazz, Cache.class);
+			}
+		});
 		adviceList.add(cacheAdvice);
+		
+		// Create EvictCache advice
 		AdviceDefinition evictCacheAdvice = new AdviceDefinition();
 		evictCacheAdvice.setType(AdviceLocation.Before);
 		evictCacheAdvice.setPointcutType("within");
 		evictCacheAdvice.setPointcutValue(new String[] { "*" });
 		method = reflector.getMethod(CacheAspect.class, "evictCache", JoinPoint.class);
 		evictCacheAdvice.setMethod(method);
+		evictCacheAdvice.setQualifier(new AdviceQualifier() {
+			@Override
+			public boolean qualifies(Class<?> clazz) {
+				return reflector.containsMethodAnnotation(clazz, EvictCache.class);
+			}
+		});
 		adviceList.add(evictCacheAdvice);
+		
 		cachingAspect.setAdvice(adviceList);
 		aspects.add(cachingAspect);
 	}

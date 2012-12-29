@@ -79,6 +79,7 @@ public class AspectDefinition {
 		private String mPointcutType;
 		private String[] mPointcutValue;
 		private int mOrder;
+		private AdviceQualifier mQualifier;
 
 		public AdviceDefinition() {
 			mOrder = Integer.MAX_VALUE;
@@ -130,6 +131,42 @@ public class AspectDefinition {
 
 		public void setOrder(int order) {
 			mOrder = order;
+		}
+
+		public boolean qualifies(Class<?> clazz) {
+			if (clazz == null)
+				return false;
+			if (mQualifier == null)
+				return true;
+			return mQualifier.qualifies(clazz);
+		}
+
+		public void setQualifier(AdviceQualifier qualifier) {
+			mQualifier = qualifier;
+		}
+
+		/**
+		 * <p>
+		 * Used to determine if a {@link Class} qualifies for the containing
+		 * {@link AdviceDefinition}.
+		 * </p>
+		 * 
+		 * @author Tyler Treat
+		 * @version 1.0 12/29/12
+		 * @since 1.0
+		 */
+		public interface AdviceQualifier {
+
+			/**
+			 * Indicates if the given {@link Class} qualifies for the containing
+			 * {@link AdviceDefinition}.
+			 * 
+			 * @param clazz
+			 *            the {@code Class} to qualify
+			 * @return {@code true} if it qualifies, {@code false} if not
+			 */
+			boolean qualifies(Class<?> clazz);
+
 		}
 
 	}

@@ -101,6 +101,9 @@ public class GenericPointcutBuilder implements PointcutBuilder {
 				beanName = bean.substring(0, bean.indexOf('.'));
 			else
 				isClassScope = true;
+			Class<?> beanType = mBeanFactory.getBeanType(beanName);
+			if (!advice.qualifies(beanType))
+				continue;
 			Object beanObject = mBeanFactory.loadBean(beanName);
 			JoinPoint joinPoint = advice.getType() == AdviceLocation.Around ? new BasicProceedingJoinPoint(mContext, advisor,
 					advice.getMethod()) : new BasicJoinPoint(mContext, advisor, advice.getMethod(), advice.getType());
@@ -128,6 +131,9 @@ public class GenericPointcutBuilder implements PointcutBuilder {
 			Map<AbstractBeanDefinition, String> invertedMap = CollectionUtil.invert(mBeanFactory.getBeanDefinitions());
 			for (AbstractBeanDefinition bean : invertedMap.keySet()) {
 				if (all || bean.getType().getName().startsWith(pkg)) {
+					Class<?> beanType = bean.getType();
+					if (!advice.qualifies(beanType))
+						continue;
 					JoinPoint joinPoint = advice.getType() == AdviceLocation.Around ? new BasicProceedingJoinPoint(mContext, advisor,
 							advice.getMethod()) : new BasicJoinPoint(mContext, advisor, advice.getMethod(), advice.getType());
 					joinPoint.setBeanName(bean.getName());
@@ -191,6 +197,7 @@ public class GenericPointcutBuilder implements PointcutBuilder {
 	// Adds the JoinPoint to a Pointcut in pointcutMap
 	// If there's no Pointcut for the type, it will add one
 	private void putJoinPoint(Map<String, Pointcut> pointcutMap, JoinPoint joinPoint) {
+		
 		if (pointcutMap.containsKey(joinPoint.getBeanName())) {
 			pointcutMap.get(joinPoint.getBeanName()).addJoinPoint(joinPoint);
 		} else {
