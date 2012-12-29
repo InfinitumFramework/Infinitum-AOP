@@ -29,7 +29,7 @@ import com.clarionmedia.infinitum.aop.AspectWeaver;
 import com.clarionmedia.infinitum.aop.Pointcut;
 import com.clarionmedia.infinitum.aop.PointcutBuilder;
 import com.clarionmedia.infinitum.aop.context.InfinitumAopContext;
-import com.clarionmedia.infinitum.di.AopProxy;
+import com.clarionmedia.infinitum.di.AbstractProxy;
 import com.clarionmedia.infinitum.di.BeanFactory;
 
 /**
@@ -64,7 +64,7 @@ public class GenericAspectWeaver implements AspectWeaver {
 		for (Pointcut pointcut : mPointcutBuilder.build(aspects)) {
 			String beanName = pointcut.getBeanName();
 			Object bean = mBeanFactory.loadBean(beanName);
-			AopProxy proxy = mProxyFactory.createProxy(context, bean, pointcut);
+			AbstractProxy proxy = mProxyFactory.createProxy(context, bean, pointcut);
 			mBeanFactory.getBeanDefinitions().get(beanName).setBeanProxy(proxy);
 		}
 	}

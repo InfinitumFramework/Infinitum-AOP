@@ -21,11 +21,15 @@ package com.clarionmedia.infinitum.aop;
 
 import android.content.Context;
 
-import com.clarionmedia.infinitum.di.AopProxy;
+import com.clarionmedia.infinitum.di.AbstractProxy;
 
 /**
  * <p>
- * Factory for creating {@link AopProxy} instances.
+ * Factory for creating advice-woven {@link AbstractProxy} instances. This
+ * factory will use the most appropriate {@code AbstractProxy} implementation
+ * for the {@link Object} being proxied. If possible, a {@link JdkDynamicProxy}
+ * will be used to avoid bytecode instrumentation. Otherwise, a
+ * {@link DexMakerProxy} will be used.
  * </p>
  * 
  * @author Tyler Treat
@@ -35,7 +39,7 @@ import com.clarionmedia.infinitum.di.AopProxy;
 public interface AdvisedProxyFactory {
 
 	/**
-	 * Creates a new {@link AopProxy} for the given {@link Object}.
+	 * Creates a new {@link AbstractProxy} for the given {@link Object}.
 	 * 
 	 * @param context
 	 *            the {@link Context} used to retrieve the DEX bytecode cache if
@@ -44,8 +48,8 @@ public interface AdvisedProxyFactory {
 	 *            the {@code Object} to proxy
 	 * @param pointcut
 	 *            the {@link Pointcut} containing advice
-	 * @return {@code AopProxy}
+	 * @return {@code AbstractProxy}
 	 */
-	AopProxy createProxy(Context context, Object object, Pointcut pointcut);
+	AbstractProxy createProxy(Context context, Object object, Pointcut pointcut);
 
 }

@@ -23,11 +23,11 @@ import android.content.Context;
 
 import com.clarionmedia.infinitum.aop.AdvisedProxyFactory;
 import com.clarionmedia.infinitum.aop.Pointcut;
-import com.clarionmedia.infinitum.di.AopProxy;
+import com.clarionmedia.infinitum.di.AbstractProxy;
 
 /**
  * <p>
- * {@link AdvisedProxyFactory} which creates {@link AopProxy} instances by
+ * {@link AdvisedProxyFactory} which creates {@link AbstractProxy} instances by
  * determining the best implementation to use.
  * {@code DelegatingAdvisedProxyFactory} will use {@link AdvisedDexMakerProxy}
  * to proxy non-final classes and {@link AdvisedJdkDynamicProxy} to proxy
@@ -41,7 +41,7 @@ import com.clarionmedia.infinitum.di.AopProxy;
 public class DelegatingAdvisedProxyFactory implements AdvisedProxyFactory {
 
 	@Override
-	public AopProxy createProxy(Context context, Object object,
+	public AbstractProxy createProxy(Context context, Object object,
 			Pointcut pointcut) {
 		Class<?> clazz = object.getClass();
 		Class<?>[] interfaces = clazz.getInterfaces();

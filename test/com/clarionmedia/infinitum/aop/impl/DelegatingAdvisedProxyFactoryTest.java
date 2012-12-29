@@ -29,7 +29,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import com.clarionmedia.infinitum.aop.Pointcut;
-import com.clarionmedia.infinitum.di.AopProxy;
+import com.clarionmedia.infinitum.di.AbstractProxy;
 import com.xtremelabs.robolectric.Robolectric;
 import com.xtremelabs.robolectric.RobolectricTestRunner;
 
@@ -45,14 +45,14 @@ public class DelegatingAdvisedProxyFactoryTest {
 
 	@Test
 	public void testCreateProxy_dexMakerProxy() {
-		AopProxy proxy = proxyFactory.createProxy(Robolectric.application, new Object(), new Pointcut("someBean",
+		AbstractProxy proxy = proxyFactory.createProxy(Robolectric.application, new Object(), new Pointcut("someBean",
 				Object.class));
 		assertThat(proxy, is(AdvisedDexMakerProxy.class));
 	}
 
 	@Test
 	public void testCreateProxy_jdkDynamicProxy() {
-		AopProxy proxy = proxyFactory.createProxy(Robolectric.application, new ArrayList<String>(), new Pointcut(
+		AbstractProxy proxy = proxyFactory.createProxy(Robolectric.application, new ArrayList<String>(), new Pointcut(
 				"someBean", ArrayList.class));
 		assertThat(proxy, is(AdvisedJdkDynamicProxy.class));
 	}
