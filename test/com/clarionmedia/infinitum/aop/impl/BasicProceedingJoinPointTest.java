@@ -22,6 +22,7 @@ package com.clarionmedia.infinitum.aop.impl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import com.clarionmedia.infinitum.aop.ProceedingJoinPoint;
+import com.clarionmedia.infinitum.aop.context.InfinitumAopContext;
 import com.xtremelabs.robolectric.RobolectricTestRunner;
 
 @RunWith(RobolectricTestRunner.class)
@@ -44,6 +46,7 @@ public class BasicProceedingJoinPointTest {
 	private Object[] args;
 	private String beanName;
 	private List<String> target;
+	private InfinitumAopContext mockContext = mock(InfinitumAopContext.class);
 	
 	@Before
 	public void setup() throws NoSuchMethodException, SecurityException {
@@ -54,7 +57,7 @@ public class BasicProceedingJoinPointTest {
 		target.add("hello");
 		advice = mockAdvisor.getClass().getMethod("firstAdvice", ProceedingJoinPoint.class);
 		method = ArrayList.class.getMethod("toString");
-		proceedingJoinPoint = new BasicProceedingJoinPoint(mockAdvisor, advice);
+		proceedingJoinPoint = new BasicProceedingJoinPoint(mockContext, mockAdvisor, advice);
 		proceedingJoinPoint.setArguments(args);
 		proceedingJoinPoint.setBeanName(beanName);
 		proceedingJoinPoint.setMethod(method);
@@ -63,7 +66,7 @@ public class BasicProceedingJoinPointTest {
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void testConstructor() {
-		new BasicJoinPoint(null, null, null);
+		new BasicJoinPoint(mockContext, null, null, null);
 		assertTrue("BasicProceedingJoinPoint constructor should have thrown an IllegalArgumentException", false);
 	}
 	
@@ -79,7 +82,7 @@ public class BasicProceedingJoinPointTest {
 	@Test
 	public void testInvoke_chained() throws Exception {
 		// Setup
-		BasicProceedingJoinPoint otherJoinPoint = new BasicProceedingJoinPoint(mockAdvisor, advice);
+		BasicProceedingJoinPoint otherJoinPoint = new BasicProceedingJoinPoint(mockContext, mockAdvisor, advice);
 		otherJoinPoint.setArguments(args);
 		otherJoinPoint.setBeanName(beanName);
 		otherJoinPoint.setMethod(method);
@@ -96,7 +99,7 @@ public class BasicProceedingJoinPointTest {
 	@Test
 	public void testHashCode_equal() {
 		// Setup
-		BasicProceedingJoinPoint otherJoinPoint = new BasicProceedingJoinPoint(mockAdvisor, advice);
+		BasicProceedingJoinPoint otherJoinPoint = new BasicProceedingJoinPoint(mockContext, mockAdvisor, advice);
 		otherJoinPoint.setArguments(args);
 		otherJoinPoint.setBeanName(beanName);
 		otherJoinPoint.setMethod(method);
@@ -113,7 +116,7 @@ public class BasicProceedingJoinPointTest {
 	@Test
 	public void testHashCode_notEqual() {
 		// Setup
-		BasicProceedingJoinPoint otherJoinPoint = new BasicProceedingJoinPoint(new Object(), advice);
+		BasicProceedingJoinPoint otherJoinPoint = new BasicProceedingJoinPoint(mockContext, new Object(), advice);
 		otherJoinPoint.setArguments(args);
 		otherJoinPoint.setBeanName(beanName);
 		otherJoinPoint.setMethod(method);
@@ -130,7 +133,7 @@ public class BasicProceedingJoinPointTest {
 	@Test
 	public void testEquals_equal() {
 		// Setup
-		BasicProceedingJoinPoint otherJoinPoint = new BasicProceedingJoinPoint(mockAdvisor, advice);
+		BasicProceedingJoinPoint otherJoinPoint = new BasicProceedingJoinPoint(mockContext, mockAdvisor, advice);
 		otherJoinPoint.setArguments(args);
 		otherJoinPoint.setBeanName(beanName);
 		otherJoinPoint.setMethod(method);
@@ -146,7 +149,7 @@ public class BasicProceedingJoinPointTest {
 	@Test
 	public void testEquals_notEqual() {
 		// Setup
-		BasicProceedingJoinPoint otherJoinPoint = new BasicProceedingJoinPoint(mockAdvisor, advice);
+		BasicProceedingJoinPoint otherJoinPoint = new BasicProceedingJoinPoint(mockContext, mockAdvisor, advice);
 		otherJoinPoint.setArguments(args);
 		otherJoinPoint.setBeanName("differentBean");
 		otherJoinPoint.setMethod(method);

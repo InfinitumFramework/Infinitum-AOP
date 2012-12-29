@@ -46,6 +46,8 @@ import com.clarionmedia.infinitum.context.InfinitumContext;
 import com.clarionmedia.infinitum.context.RestfulContext;
 import com.clarionmedia.infinitum.context.impl.XmlApplicationContext;
 import com.clarionmedia.infinitum.context.impl.XmlAspect;
+import com.clarionmedia.infinitum.di.AbstractBeanDefinition;
+import com.clarionmedia.infinitum.di.BeanDefinitionBuilder;
 import com.clarionmedia.infinitum.di.BeanFactory;
 import com.clarionmedia.infinitum.di.XmlBean;
 import com.clarionmedia.infinitum.internal.StringUtil;
@@ -67,7 +69,6 @@ public class XmlInfinitumAopContext implements InfinitumAopContext {
 	private XmlApplicationContext mParentContext;
 	private List<InfinitumContext> mChildContexts;
 	private Map<String, Map<Integer, Object>> mMethodCache;
-	private boolean mIsProcessed;
 
 	/**
 	 * Creates a new {@code XmlInfinitumAopContext} instance as a child of the
@@ -84,9 +85,6 @@ public class XmlInfinitumAopContext implements InfinitumAopContext {
 
 	@Override
 	public void postProcess(Context context) {
-		if (mIsProcessed)
-			return;
-		
 		// Load aspect data from parent context
 		Set<XmlBean> xmlComponents = mParentContext.getXmlComponents();
 		Set<Class<?>> scannedAspects = getAndRemoveAspects(mParentContext.getScannedComponents());
@@ -96,14 +94,17 @@ public class XmlInfinitumAopContext implements InfinitumAopContext {
 
 		// Add caching advice for cache abstraction
 		if (isCacheAbstractionEnabled())
-		    addCachingAdvice(aspects);
+			addCachingAdvice(aspects);
 
 		// Process aspects
 		new GenericAspectWeaver(this).weave(context, aspects);
-		
-		mIsProcessed = true;
 	}
-	
+
+	@Override
+	public List<AbstractBeanDefinition> getBeans(BeanDefinitionBuilder beanDefinitionBuilder) {
+		return new ArrayList<AbstractBeanDefinition>(0);
+	}
+
 	@Override
 	public boolean isCacheAbstractionEnabled() {
 		if (mParentContext.getAppConfig().containsKey("cacheAbstraction"))
@@ -196,7 +197,7 @@ public class XmlInfinitumAopContext implements InfinitumAopContext {
 		}
 		return aspects;
 	}
-	
+
 	private void addCachingAdvice(Set<AspectDefinition> aspects) {
 		ClassReflector reflector = new DefaultClassReflector();
 		AspectDefinition cachingAspect = new AspectDefinition();

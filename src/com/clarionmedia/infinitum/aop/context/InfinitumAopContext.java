@@ -21,6 +21,7 @@ package com.clarionmedia.infinitum.aop.context;
 
 import java.util.Map;
 
+import com.clarionmedia.infinitum.context.BeanProvider;
 import com.clarionmedia.infinitum.context.InfinitumContext;
 
 /**
@@ -33,7 +34,7 @@ import com.clarionmedia.infinitum.context.InfinitumContext;
  * @version 1.0 12/24/12
  * @since 1.0
  */
-public interface InfinitumAopContext extends InfinitumContext {
+public interface InfinitumAopContext extends InfinitumContext, BeanProvider {
 
 	/**
 	 * Indicates if cache abstraction is enabled.
