@@ -19,6 +19,8 @@
 
 package com.clarionmedia.infinitum.aop.context;
 
+import java.util.Map;
+
 import com.clarionmedia.infinitum.context.InfinitumContext;
 
 /**
@@ -32,5 +34,7 @@ import com.clarionmedia.infinitum.context.InfinitumContext;
  * @since 1.0
  */
 public interface InfinitumAopContext extends InfinitumContext {
+	
+	Map<String, Map<Integer, Object>> getMethodCache();
 
 }

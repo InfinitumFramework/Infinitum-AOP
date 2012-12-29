@@ -23,6 +23,7 @@ import java.lang.reflect.Method;
 import java.util.Comparator;
 
 import com.clarionmedia.infinitum.aop.annotation.Aspect;
+import com.clarionmedia.infinitum.aop.context.InfinitumAopContext;
 
 /**
  * <p>
@@ -209,6 +210,14 @@ public interface JoinPoint {
 	 *             if the advice throws any exceptions
 	 */
 	Object invoke() throws Exception;
+
+	/**
+	 * Returns the {@link InfinitumAopContext} this {@code JoinPoint} is scoped
+	 * to.
+	 * 
+	 * @return {@code InfinitumAopContext}
+	 */
+	InfinitumAopContext getContext();
 
 	/**
 	 * <p>

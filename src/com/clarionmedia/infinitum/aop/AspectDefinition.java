@@ -81,6 +81,7 @@ public class AspectDefinition {
 		private int mOrder;
 
 		public AdviceDefinition() {
+			mOrder = Integer.MAX_VALUE;
 		}
 
 		public AdviceDefinition(AdviceDefinition advice) {

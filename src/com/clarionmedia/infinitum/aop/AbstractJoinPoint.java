@@ -20,9 +20,11 @@
 package com.clarionmedia.infinitum.aop;
 
 import java.lang.reflect.Method;
+
+import com.clarionmedia.infinitum.aop.annotation.Aspect;
+import com.clarionmedia.infinitum.aop.context.InfinitumAopContext;
 import com.clarionmedia.infinitum.aop.impl.BasicJoinPoint;
 import com.clarionmedia.infinitum.aop.impl.BasicProceedingJoinPoint;
-import com.clarionmedia.infinitum.aop.annotation.Aspect;
 import com.clarionmedia.infinitum.internal.Preconditions;
 
 /**
@@ -46,20 +48,27 @@ public abstract class AbstractJoinPoint implements JoinPoint {
 	protected Method mAdvice;
 	protected Object mAdvisor;
 	protected int mOrder;
+	protected InfinitumAopContext mContext;
 
 	/**
 	 * Creates a new {@code AbstractJoinPoint}.
 	 * 
+	 * @param context
+	 *            the {@link InfinitumAopContext} this {@code JoinPoint} is
+	 *            scoped to
 	 * @param advisor
 	 *            the {@link Aspect} containing the advice to apply
 	 * @param advice
-	 *            the advice {@link Method} to apply at this {link JoinPoint}
+	 *            the advice {@link Method} to apply at this {code JoinPoint}
 	 */
-	public AbstractJoinPoint(Object advisor, Method advice) {
+	public AbstractJoinPoint(InfinitumAopContext context, Object advisor, Method advice) {
 		Preconditions.checkNotNull(advisor);
 		Preconditions.checkNotNull(advice);
+		Preconditions.checkNotNull(context);
 		mAdvisor = advisor;
 		mAdvice = advice;
+		mAdvice.setAccessible(true);
+		mContext = context;
 	}
 
 	/**
@@ -78,6 +87,7 @@ public abstract class AbstractJoinPoint implements JoinPoint {
 		mMethod = joinPoint.mMethod;
 		mOrder = joinPoint.mOrder;
 		mTarget = joinPoint.mTarget;
+		mContext = joinPoint.mContext;
 	}
 
 	@Override
@@ -111,19 +121,19 @@ public abstract class AbstractJoinPoint implements JoinPoint {
 	}
 
 	@Override
+	public InfinitumAopContext getContext() {
+		return mContext;
+	}
+
+	@Override
 	public boolean equals(Object object) {
 		if (this == object)
 			return true;
-		if ((object == null)
-				|| (!getClass().isAssignableFrom(object.getClass())))
+		if ((object == null) || (!getClass().isAssignableFrom(object.getClass())))
 			return false;
 		AbstractJoinPoint other = (AbstractJoinPoint) object;
-		return other.mIsClassScope == mIsClassScope
-				&& other.mAdvice.equals(mAdvice)
-				&& other.mAdvisor.equals(mAdvisor)
-				&& other.mArguments.equals(mArguments)
-				&& other.mBeanName.equals(mBeanName)
-				&& other.mMethod.equals(mMethod)
+		return other.mIsClassScope == mIsClassScope && other.mAdvice.equals(mAdvice) && other.mAdvisor.equals(mAdvisor)
+				&& other.mArguments.equals(mArguments) && other.mBeanName.equals(mBeanName) && other.mMethod.equals(mMethod)
 				&& other.mTarget.equals(mTarget);
 	}
 

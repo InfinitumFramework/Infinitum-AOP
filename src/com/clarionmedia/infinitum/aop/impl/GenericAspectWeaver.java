@@ -28,6 +28,7 @@ import com.clarionmedia.infinitum.aop.AspectDefinition;
 import com.clarionmedia.infinitum.aop.AspectWeaver;
 import com.clarionmedia.infinitum.aop.Pointcut;
 import com.clarionmedia.infinitum.aop.PointcutBuilder;
+import com.clarionmedia.infinitum.aop.context.InfinitumAopContext;
 import com.clarionmedia.infinitum.di.AopProxy;
 import com.clarionmedia.infinitum.di.BeanFactory;
 
@@ -52,10 +53,10 @@ public class GenericAspectWeaver implements AspectWeaver {
 	 * @param beanFactory
 	 *            the {@link BeanFactory} the aspects are scoped to
 	 */
-	public GenericAspectWeaver(BeanFactory beanFactory) {
-		mPointcutBuilder = new GenericPointcutBuilder(beanFactory);
+	public GenericAspectWeaver(InfinitumAopContext context) {
+		mPointcutBuilder = new GenericPointcutBuilder(context);
 		mProxyFactory = new DelegatingAdvisedProxyFactory();
-		mBeanFactory = beanFactory;
+		mBeanFactory = context.getBeanFactory();
 	}
 
 	@Override

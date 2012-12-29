@@ -24,6 +24,7 @@ import java.lang.reflect.Method;
 import com.clarionmedia.infinitum.aop.AbstractJoinPoint;
 import com.clarionmedia.infinitum.aop.JoinPoint;
 import com.clarionmedia.infinitum.aop.annotation.Aspect;
+import com.clarionmedia.infinitum.aop.context.InfinitumAopContext;
 import com.clarionmedia.infinitum.internal.Preconditions;
 
 /**
@@ -42,6 +43,9 @@ public class BasicJoinPoint extends AbstractJoinPoint implements JoinPoint {
 	/**
 	 * Creates a new {@code BasicJoinPoint}.
 	 * 
+	 * @param context
+	 *            the {@link InfinitumAopContext} this {@code JoinPoint} is
+	 *            scoped to
 	 * @param advisor
 	 *            the {@link Aspect} containing the advice to apply
 	 * @param advice
@@ -49,8 +53,8 @@ public class BasicJoinPoint extends AbstractJoinPoint implements JoinPoint {
 	 * @param location
 	 *            advice location
 	 */
-	public BasicJoinPoint(Object advisor, Method advice, AdviceLocation location) {
-		super(advisor, advice);
+	public BasicJoinPoint(InfinitumAopContext context, Object advisor, Method advice, AdviceLocation location) {
+		super(context, advisor, advice);
 		mLocation = location;
 	}
 

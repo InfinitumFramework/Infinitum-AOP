@@ -31,6 +31,7 @@ import com.clarionmedia.infinitum.aop.JoinPoint;
 import com.clarionmedia.infinitum.aop.JoinPoint.AdviceLocation;
 import com.clarionmedia.infinitum.aop.Pointcut;
 import com.clarionmedia.infinitum.aop.PointcutBuilder;
+import com.clarionmedia.infinitum.aop.context.InfinitumAopContext;
 import com.clarionmedia.infinitum.di.AbstractBeanDefinition;
 import com.clarionmedia.infinitum.di.BeanFactory;
 import com.clarionmedia.infinitum.exception.InfinitumRuntimeException;
@@ -53,18 +54,20 @@ public class GenericPointcutBuilder implements PointcutBuilder {
 
 	private ClassReflector mClassReflector;
 	private PackageReflector mPackageReflector;
+	private InfinitumAopContext mContext;
 	private BeanFactory mBeanFactory;
 
 	/**
 	 * Constructs a new {@code GenericPointcutBuilder} instance.
 	 * 
-	 * @param beanFactory
-	 *            the {@link BeanFactory} to use for resolving dependencies
+	 * @param context
+	 *            {@link InfinitumAopContext}
 	 */
-	public GenericPointcutBuilder(BeanFactory beanFactory) {
+	public GenericPointcutBuilder(InfinitumAopContext context) {
 		mClassReflector = new DefaultClassReflector();
 		mPackageReflector = new DefaultPackageReflector();
-		mBeanFactory = beanFactory;
+		mContext = context;
+		mBeanFactory = context.getBeanFactory();
 	}
 
 	@Override
@@ -99,8 +102,8 @@ public class GenericPointcutBuilder implements PointcutBuilder {
 			else
 				isClassScope = true;
 			Object beanObject = mBeanFactory.loadBean(beanName);
-			JoinPoint joinPoint = advice.getType() == AdviceLocation.Around ? new BasicProceedingJoinPoint(advisor, advice.getMethod())
-					: new BasicJoinPoint(advisor, advice.getMethod(), advice.getType());
+			JoinPoint joinPoint = advice.getType() == AdviceLocation.Around ? new BasicProceedingJoinPoint(mContext, advisor,
+					advice.getMethod()) : new BasicJoinPoint(mContext, advisor, advice.getMethod(), advice.getType());
 			joinPoint.setBeanName(beanName);
 			joinPoint.setTarget(beanObject);
 			joinPoint.setOrder(advice.getOrder());
@@ -121,17 +124,18 @@ public class GenericPointcutBuilder implements PointcutBuilder {
 			pkg = pkg.toLowerCase(Locale.getDefault()).trim();
 			if (pkg.length() == 0)
 				continue;
+			boolean all = pkg.equals("*");
 			Map<AbstractBeanDefinition, String> invertedMap = CollectionUtil.invert(mBeanFactory.getBeanDefinitions());
 			for (AbstractBeanDefinition bean : invertedMap.keySet()) {
-				if (!bean.getType().getName().startsWith(pkg))
-					continue;
-				JoinPoint joinPoint = advice.getType() == AdviceLocation.Around ? new BasicProceedingJoinPoint(advisor, advice.getMethod())
-						: new BasicJoinPoint(advisor, advice.getMethod(), advice.getType());
-				joinPoint.setBeanName(bean.getName());
-				joinPoint.setTarget(bean.getNonProxiedBeanInstance());
-				joinPoint.setOrder(advice.getOrder());
-				joinPoint.setClassScope(true);
-				putJoinPoint(pointcutMap, joinPoint);
+				if (all || bean.getType().getName().startsWith(pkg)) {
+					JoinPoint joinPoint = advice.getType() == AdviceLocation.Around ? new BasicProceedingJoinPoint(mContext, advisor,
+							advice.getMethod()) : new BasicJoinPoint(mContext, advisor, advice.getMethod(), advice.getType());
+					joinPoint.setBeanName(bean.getName());
+					joinPoint.setTarget(bean.getNonProxiedBeanInstance());
+					joinPoint.setOrder(advice.getOrder());
+					joinPoint.setClassScope(true);
+					putJoinPoint(pointcutMap, joinPoint);
+				}
 			}
 		}
 	}

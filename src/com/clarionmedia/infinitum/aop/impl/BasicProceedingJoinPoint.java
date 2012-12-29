@@ -24,6 +24,7 @@ import java.lang.reflect.Method;
 import com.clarionmedia.infinitum.aop.AbstractJoinPoint;
 import com.clarionmedia.infinitum.aop.ProceedingJoinPoint;
 import com.clarionmedia.infinitum.aop.annotation.Aspect;
+import com.clarionmedia.infinitum.aop.context.InfinitumAopContext;
 import com.clarionmedia.infinitum.internal.Preconditions;
 
 /**
@@ -42,13 +43,16 @@ public class BasicProceedingJoinPoint extends AbstractJoinPoint implements Proce
 	/**
 	 * Creates a new {@code BasicProceedingJoinPoint}.
 	 * 
+	 * @param context
+	 *            the {@link InfinitumAopContext} this {@code JoinPoint} is
+	 *            scoped to
 	 * @param advisor
 	 *            the {@link Aspect} containing the advice to apply
 	 * @param advice
 	 *            the advice {@link Method} to apply at this {link JoinPoint}
 	 */
-	public BasicProceedingJoinPoint(Object advisor, Method advice) {
-		super(advisor, advice);
+	public BasicProceedingJoinPoint(InfinitumAopContext context, Object advisor, Method advice) {
+		super(context, advisor, advice);
 	}
 
 	/**
@@ -59,7 +63,7 @@ public class BasicProceedingJoinPoint extends AbstractJoinPoint implements Proce
 	 *            the {@code BasicProceedingJoinPoint} to copy
 	 */
 	public BasicProceedingJoinPoint(BasicProceedingJoinPoint joinPoint) {
-		super(joinPoint.mAdvisor, joinPoint.mAdvice);
+		super(joinPoint.mContext, joinPoint.mAdvisor, joinPoint.mAdvice);
 		mNext = joinPoint.mNext;
 	}
 
