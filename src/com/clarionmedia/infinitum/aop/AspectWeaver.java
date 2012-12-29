@@ -43,6 +43,6 @@ public interface AspectWeaver {
 	 * @param aspects
 	 *            the aspects to weave
 	 */
-	void weave(Context context, Set<Class<?>> aspects);
+	void weave(Context context, Set<AspectDefinition> aspects);
 
 }

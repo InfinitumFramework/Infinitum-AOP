@@ -17,20 +17,40 @@
  * along with Infinitum Framework.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.clarionmedia.infinitum.aop.context;
+package com.clarionmedia.infinitum.aop;
 
-import com.clarionmedia.infinitum.context.InfinitumContext;
+import com.clarionmedia.infinitum.context.impl.XmlAspect;
 
 /**
  * <p>
- * {@code InfinitumAopContext} is an extension of {@link InfinitumContext} that
- * contains configuration information for the framework AOP module.
+ * Provides an API for transforming a non-generic aspect definition, i.e. an
+ * aspect defined in XML or through component scanning, into a generic
+ * {@link AspectDefinition}.
  * </p>
  * 
  * @author Tyler Treat
- * @version 1.0 12/24/12
+ * @version 1.0 12/28/12
  * @since 1.0
  */
-public interface InfinitumAopContext extends InfinitumContext {
+public interface AspectTransformer {
+
+	/**
+	 * Transforms the given aspect {@link Class} into a {@link AspectDefinition}
+	 * .
+	 * 
+	 * @param aspect
+	 *            the aspect to transform
+	 * @return transformed {@code AspectDefinition}
+	 */
+	AspectDefinition transform(Class<?> aspect);
+
+	/**
+	 * Transforms the given {@link XmlAspect} into a {@link AspectDefinition}.
+	 * 
+	 * @param aspect
+	 *            the aspect to transform
+	 * @return transformed {@code AspectDefinition}
+	 */
+	AspectDefinition transform(XmlAspect aspect);
 
 }

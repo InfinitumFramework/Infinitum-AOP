@@ -17,20 +17,30 @@
  * along with Infinitum Framework.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.clarionmedia.infinitum.aop.context;
+package com.clarionmedia.infinitum.aop;
 
-import com.clarionmedia.infinitum.context.InfinitumContext;
+import java.util.Collection;
 
 /**
  * <p>
- * {@code InfinitumAopContext} is an extension of {@link InfinitumContext} that
- * contains configuration information for the framework AOP module.
+ * Provides an API for constructing {@link Pointcut} definitions from an
+ * {@link AspectDefinition}.
  * </p>
  * 
  * @author Tyler Treat
- * @version 1.0 12/24/12
+ * @version 1.0 12/28/12
  * @since 1.0
  */
-public interface InfinitumAopContext extends InfinitumContext {
+public interface PointcutBuilder {
+
+	/**
+	 * Builds a collection of {@link Pointcut} definitions from the given set of
+	 * {@code AspectDefinition}s.
+	 * 
+	 * @param aspects
+	 *            the {@code AspectDefinition}s to build {@code Pointcut}s for
+	 * @return collection of {@code Pointcut}s
+	 */
+	Collection<Pointcut> build(Collection<AspectDefinition> aspects);
 
 }

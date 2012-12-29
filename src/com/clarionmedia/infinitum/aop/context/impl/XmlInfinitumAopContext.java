@@ -28,23 +28,18 @@ import java.util.Set;
 
 import android.content.Context;
 
-import com.clarionmedia.infinitum.aop.AspectFactory;
+import com.clarionmedia.infinitum.aop.AspectDefinition;
+import com.clarionmedia.infinitum.aop.AspectTransformer;
 import com.clarionmedia.infinitum.aop.annotation.Aspect;
 import com.clarionmedia.infinitum.aop.context.InfinitumAopContext;
-import com.clarionmedia.infinitum.aop.impl.AnnotationsAspectWeaver;
-import com.clarionmedia.infinitum.aop.impl.ConfigurableAspectFactory;
-import com.clarionmedia.infinitum.aop.impl.XmlAspectWeaver;
+import com.clarionmedia.infinitum.aop.impl.GenericAspectTransformer;
+import com.clarionmedia.infinitum.aop.impl.GenericAspectWeaver;
 import com.clarionmedia.infinitum.context.InfinitumContext;
 import com.clarionmedia.infinitum.context.RestfulContext;
 import com.clarionmedia.infinitum.context.impl.XmlApplicationContext;
 import com.clarionmedia.infinitum.context.impl.XmlAspect;
-import com.clarionmedia.infinitum.di.AbstractBeanDefinition;
-import com.clarionmedia.infinitum.di.BeanDefinitionBuilder;
 import com.clarionmedia.infinitum.di.BeanFactory;
 import com.clarionmedia.infinitum.di.XmlBean;
-import com.clarionmedia.infinitum.di.annotation.Scope;
-import com.clarionmedia.infinitum.di.impl.GenericBeanDefinitionBuilder;
-import com.clarionmedia.infinitum.internal.StringUtil;
 
 /**
  * <p>
@@ -61,7 +56,6 @@ public class XmlInfinitumAopContext implements InfinitumAopContext {
 
 	private XmlApplicationContext mParentContext;
 	private List<InfinitumContext> mChildContexts;
-	private AspectFactory mAspectFactory;
 
 	/**
 	 * Creates a new {@code XmlInfinitumAopContext} instance as a child of the
@@ -73,63 +67,19 @@ public class XmlInfinitumAopContext implements InfinitumAopContext {
 	public XmlInfinitumAopContext(XmlApplicationContext parentContext) {
 		mParentContext = parentContext;
 		mChildContexts = new ArrayList<InfinitumContext>();
-		mAspectFactory = new ConfigurableAspectFactory(parentContext);
 	}
 
 	@Override
 	public void postProcess(Context context) {
-		BeanFactory mBeanFactory = mParentContext.getBeanFactory();
+		// Load aspect data from parent context
 		Set<XmlBean> xmlComponents = mParentContext.getXmlComponents();
-		
-		// Collect XML aspects
-		List<XmlAspect> xmlAspects = new ArrayList<XmlAspect>();
-		for (XmlBean component : xmlComponents) {
-			if (XmlAspect.class.isAssignableFrom(component.getClass())) {
-				xmlAspects.add((XmlAspect) component);
-			}
-		}
-		
-		// Register XML aspects
-		mAspectFactory.registerAspects(xmlAspects);
-		
-		// Register scanned aspects
-		Set<Class<?>> aspects = getAndRemoveAspects(mParentContext.getScannedComponents());
-		BeanDefinitionBuilder beanDefinitionBuilder = new GenericBeanDefinitionBuilder(mBeanFactory);
-		for (Class<?> aspectClass : aspects) {
-			Aspect aspect = aspectClass.getAnnotation(Aspect.class);
-			String beanName = aspect.value().trim().equals("") ? StringUtil.toCamelCase(aspectClass.getSimpleName()) : aspect.value()
-					.trim();
-			Scope scope = aspectClass.getAnnotation(Scope.class);
-			String scopeVal = "singleton";
-			if (scope != null)
-				scopeVal = scope.value();
-			AbstractBeanDefinition beanDefinition = beanDefinitionBuilder.setName(beanName).setType(aspectClass).setProperties(null)
-					.setScope(scopeVal).build();
-			mAspectFactory.registerAspect(beanDefinition);
-		}
-		
+		Set<Class<?>> scannedAspects = getAndRemoveAspects(mParentContext.getScannedComponents());
+
+		// Transform aspects from XML or scanned form to generic definition
+		Set<AspectDefinition> aspects = transformAspects(xmlComponents, scannedAspects);
+
 		// Process aspects
-		// Currently not supporting use of XML and annotation aspects in
-		// conjunction, only one or the other right now...
-		if (isComponentScanEnabled())
-			new AnnotationsAspectWeaver(this).weave(mParentContext.getAndroidContext(), aspects);
-		else
-			new XmlAspectWeaver(this, xmlAspects).weave(mParentContext.getAndroidContext(), null);
-	}
-
-	@Override
-	public Object getAspect(String name) {
-		return mAspectFactory.loadAspect(name);
-	}
-
-	@Override
-	public AspectFactory getAspectFactory() {
-		return mAspectFactory;
-	}
-
-	@Override
-	public <T> T getAspect(String name, Class<T> clazz) {
-		return mAspectFactory.loadAspect(name, clazz);
+		new GenericAspectWeaver(getBeanFactory()).weave(context, aspects);
 	}
 
 	@Override
@@ -176,12 +126,30 @@ public class XmlInfinitumAopContext implements InfinitumAopContext {
 	public InfinitumContext getParentContext() {
 		return mParentContext;
 	}
-	
+
 	@Override
 	public RestfulContext getRestContext() {
 		return mParentContext.getRestContext();
 	}
 	
+	private Set<AspectDefinition> transformAspects(Set<XmlBean> xmlComponents, Set<Class<?>> scannedAspects) {
+		AspectTransformer transformer = new GenericAspectTransformer();
+		Set<AspectDefinition> aspects = new HashSet<AspectDefinition>();
+
+		// Transform XML aspects
+		for (XmlBean component : xmlComponents) {
+			if (XmlAspect.class.isAssignableFrom(component.getClass())) {
+				aspects.add(transformer.transform((XmlAspect) component));
+			}
+		}
+
+		// Transform scanned aspects
+		for (Class<?> aspect : scannedAspects)
+			aspects.add(transformer.transform(aspect));
+
+		return aspects;
+	}
+
 	private Set<Class<?>> getAndRemoveAspects(Collection<Class<?>> components) {
 		Set<Class<?>> aspects = new HashSet<Class<?>>();
 		Iterator<Class<?>> iter = components.iterator();
@@ -194,6 +162,5 @@ public class XmlInfinitumAopContext implements InfinitumAopContext {
 		}
 		return aspects;
 	}
-
 
 }
