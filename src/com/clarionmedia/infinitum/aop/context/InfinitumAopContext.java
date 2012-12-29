@@ -34,7 +34,19 @@ import com.clarionmedia.infinitum.context.InfinitumContext;
  * @since 1.0
  */
 public interface InfinitumAopContext extends InfinitumContext {
-	
+
+	/**
+	 * Indicates if cache abstraction is enabled.
+	 * 
+	 * @return {@code true} if enabled, {@code false} if not
+	 */
+	boolean isCacheAbstractionEnabled();
+
+	/**
+	 * Retrieves the method cache used for cache abstraction.
+	 * 
+	 * @return method cache
+	 */
 	Map<String, Map<Integer, Object>> getMethodCache();
 
 }

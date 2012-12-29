@@ -95,36 +95,20 @@ public class XmlInfinitumAopContext implements InfinitumAopContext {
 		Set<AspectDefinition> aspects = transformAspects(xmlComponents, scannedAspects);
 
 		// Add caching advice for cache abstraction
-		addCachingAdvice(aspects);
+		if (isCacheAbstractionEnabled())
+		    addCachingAdvice(aspects);
 
 		// Process aspects
 		new GenericAspectWeaver(this).weave(context, aspects);
 		
 		mIsProcessed = true;
 	}
-
-	private void addCachingAdvice(Set<AspectDefinition> aspects) {
-		ClassReflector reflector = new DefaultClassReflector();
-		AspectDefinition cachingAspect = new AspectDefinition();
-		cachingAspect.setName(StringUtil.toCamelCase(CacheAspect.class.getSimpleName()));
-		cachingAspect.setType(CacheAspect.class);
-		List<AdviceDefinition> adviceList = new ArrayList<AdviceDefinition>();
-		AdviceDefinition cacheAdvice = new AdviceDefinition();
-		cacheAdvice.setType(AdviceLocation.Around);
-		cacheAdvice.setPointcutType("within");
-		cacheAdvice.setPointcutValue(new String[] { "*" });
-		Method method = reflector.getMethod(CacheAspect.class, "cache", ProceedingJoinPoint.class);
-		cacheAdvice.setMethod(method);
-		adviceList.add(cacheAdvice);
-		AdviceDefinition evictCacheAdvice = new AdviceDefinition();
-		evictCacheAdvice.setType(AdviceLocation.Before);
-		evictCacheAdvice.setPointcutType("within");
-		evictCacheAdvice.setPointcutValue(new String[] { "*" });
-		method = reflector.getMethod(CacheAspect.class, "evictCache", JoinPoint.class);
-		evictCacheAdvice.setMethod(method);
-		adviceList.add(evictCacheAdvice);
-		cachingAspect.setAdvice(adviceList);
-		aspects.add(cachingAspect);
+	
+	@Override
+	public boolean isCacheAbstractionEnabled() {
+		if (mParentContext.getAppConfig().containsKey("cacheAbstraction"))
+			return Boolean.parseBoolean(mParentContext.getAppConfig().get("cacheAbstraction"));
+		return false;
 	}
 
 	@Override
@@ -211,6 +195,30 @@ public class XmlInfinitumAopContext implements InfinitumAopContext {
 			}
 		}
 		return aspects;
+	}
+	
+	private void addCachingAdvice(Set<AspectDefinition> aspects) {
+		ClassReflector reflector = new DefaultClassReflector();
+		AspectDefinition cachingAspect = new AspectDefinition();
+		cachingAspect.setName(StringUtil.toCamelCase(CacheAspect.class.getSimpleName()));
+		cachingAspect.setType(CacheAspect.class);
+		List<AdviceDefinition> adviceList = new ArrayList<AdviceDefinition>();
+		AdviceDefinition cacheAdvice = new AdviceDefinition();
+		cacheAdvice.setType(AdviceLocation.Around);
+		cacheAdvice.setPointcutType("within");
+		cacheAdvice.setPointcutValue(new String[] { "*" });
+		Method method = reflector.getMethod(CacheAspect.class, "cache", ProceedingJoinPoint.class);
+		cacheAdvice.setMethod(method);
+		adviceList.add(cacheAdvice);
+		AdviceDefinition evictCacheAdvice = new AdviceDefinition();
+		evictCacheAdvice.setType(AdviceLocation.Before);
+		evictCacheAdvice.setPointcutType("within");
+		evictCacheAdvice.setPointcutValue(new String[] { "*" });
+		method = reflector.getMethod(CacheAspect.class, "evictCache", JoinPoint.class);
+		evictCacheAdvice.setMethod(method);
+		adviceList.add(evictCacheAdvice);
+		cachingAspect.setAdvice(adviceList);
+		aspects.add(cachingAspect);
 	}
 
 }
