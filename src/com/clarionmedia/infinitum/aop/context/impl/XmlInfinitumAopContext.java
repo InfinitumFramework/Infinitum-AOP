@@ -164,6 +164,11 @@ public class XmlInfinitumAopContext implements InfinitumAopContext {
 	public InfinitumContext getParentContext() {
 		return mParentContext;
 	}
+	
+	@Override
+	public <T extends InfinitumContext> T getChildContext(Class<T> contextType) {
+		return mParentContext.getChildContext(contextType);
+	}
 
 	@Override
 	public RestfulContext getRestContext() {
