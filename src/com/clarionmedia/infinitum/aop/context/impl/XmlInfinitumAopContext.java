@@ -110,8 +110,8 @@ public class XmlInfinitumAopContext implements InfinitumAopContext {
 
 	@Override
 	public boolean isCacheAbstractionEnabled() {
-		if (mParentContext.getAppConfig().containsKey("cacheAbstraction"))
-			return Boolean.parseBoolean(mParentContext.getAppConfig().get("cacheAbstraction"));
+		if (mParentContext.getAppConfig().containsKey("methodCaching"))
+			return Boolean.parseBoolean(mParentContext.getAppConfig().get("methodCaching"));
 		return false;
 	}
 
