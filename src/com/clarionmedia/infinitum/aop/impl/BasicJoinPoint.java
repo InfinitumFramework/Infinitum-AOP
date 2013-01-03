@@ -46,7 +46,7 @@ public class BasicJoinPoint extends AbstractJoinPoint implements JoinPoint {
 	 * @param advisor
 	 *            the {@link Aspect} containing the advice to apply
 	 * @param advice
-	 *            the advice {@link Method} to apply at this {link JoinPoint}
+	 *            the advice {@link Method} to apply at this {@link JoinPoint}
 	 * @param location
 	 *            advice location
 	 */

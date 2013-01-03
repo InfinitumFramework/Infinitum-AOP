@@ -46,7 +46,7 @@ public class BasicProceedingJoinPoint extends AbstractJoinPoint implements Proce
 	 * @param advisor
 	 *            the {@link Aspect} containing the advice to apply
 	 * @param advice
-	 *            the advice {@link Method} to apply at this {link JoinPoint}
+	 *            the advice {@link Method} to apply at this {@link JoinPoint}
 	 */
 	public BasicProceedingJoinPoint(InfinitumAopContext context, Object advisor, Method advice) {
 		super(context, advisor, advice);
