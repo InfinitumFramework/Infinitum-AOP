@@ -21,9 +21,11 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import com.clarionmedia.infinitum.di.annotation.Autowired;
+
 import com.clarionmedia.infinitum.aop.JoinPoint;
 import com.clarionmedia.infinitum.context.InfinitumContext;
+import com.clarionmedia.infinitum.di.annotation.Autowired;
+import com.clarionmedia.infinitum.di.annotation.Component;
 
 /**
  * <p>
@@ -49,6 +51,7 @@ import com.clarionmedia.infinitum.context.InfinitumContext;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
+@Component
 public @interface Aspect {
 
 	/**
