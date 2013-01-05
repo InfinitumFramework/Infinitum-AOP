@@ -52,7 +52,7 @@ import com.clarionmedia.infinitum.di.BeanFactory;
 import com.clarionmedia.infinitum.di.XmlBean;
 import com.clarionmedia.infinitum.internal.StringUtil;
 import com.clarionmedia.infinitum.reflection.ClassReflector;
-import com.clarionmedia.infinitum.reflection.impl.DefaultClassReflector;
+import com.clarionmedia.infinitum.reflection.impl.JavaClassReflector;
 
 /**
  * <p>
@@ -204,7 +204,7 @@ public class XmlInfinitumAopContext implements InfinitumAopContext {
 	}
 
 	private void addCachingAdvice(Set<AspectDefinition> aspects) {
-		final ClassReflector reflector = new DefaultClassReflector();
+		final ClassReflector reflector = new JavaClassReflector();
 		AspectDefinition cachingAspect = new AspectDefinition();
 		cachingAspect.setName(StringUtil.toCamelCase(CacheAspect.class.getSimpleName()));
 		cachingAspect.setType(CacheAspect.class);

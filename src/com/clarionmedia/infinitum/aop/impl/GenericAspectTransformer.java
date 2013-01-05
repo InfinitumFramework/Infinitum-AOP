@@ -32,9 +32,7 @@ import com.clarionmedia.infinitum.context.exception.InfinitumConfigurationExcept
 import com.clarionmedia.infinitum.context.impl.XmlAspect;
 import com.clarionmedia.infinitum.internal.StringUtil;
 import com.clarionmedia.infinitum.reflection.ClassReflector;
-import com.clarionmedia.infinitum.reflection.PackageReflector;
-import com.clarionmedia.infinitum.reflection.impl.DefaultClassReflector;
-import com.clarionmedia.infinitum.reflection.impl.DefaultPackageReflector;
+import com.clarionmedia.infinitum.reflection.impl.JavaClassReflector;
 
 /**
  * <p>
@@ -48,14 +46,12 @@ import com.clarionmedia.infinitum.reflection.impl.DefaultPackageReflector;
 public class GenericAspectTransformer implements AspectTransformer {
 
 	private ClassReflector mClassReflector;
-	private PackageReflector mPackageReflector;
 
 	/**
 	 * Constructs a new {@code GenericAspectTransformer} instance.
 	 */
 	public GenericAspectTransformer() {
-		mClassReflector = new DefaultClassReflector();
-		mPackageReflector = new DefaultPackageReflector();
+		mClassReflector = new JavaClassReflector();
 	}
 
 	@Override
@@ -156,7 +152,7 @@ public class GenericAspectTransformer implements AspectTransformer {
 	@Override
 	public AspectDefinition transform(XmlAspect xmlAspect) {
 		AspectDefinition ret = new AspectDefinition();
-		Class<?> clazz = mPackageReflector.getClass(xmlAspect.getClassName());
+		Class<?> clazz = mClassReflector.getClass(xmlAspect.getClassName());
 		ret.setType(clazz);
 		ret.setName(xmlAspect.getId());
 		List<AdviceDefinition> adviceList = new ArrayList<AdviceDefinition>();

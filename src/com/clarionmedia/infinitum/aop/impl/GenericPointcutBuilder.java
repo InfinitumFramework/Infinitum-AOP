@@ -34,9 +34,7 @@ import com.clarionmedia.infinitum.di.BeanFactory;
 import com.clarionmedia.infinitum.exception.InfinitumRuntimeException;
 import com.clarionmedia.infinitum.internal.CollectionUtil;
 import com.clarionmedia.infinitum.reflection.ClassReflector;
-import com.clarionmedia.infinitum.reflection.PackageReflector;
-import com.clarionmedia.infinitum.reflection.impl.DefaultClassReflector;
-import com.clarionmedia.infinitum.reflection.impl.DefaultPackageReflector;
+import com.clarionmedia.infinitum.reflection.impl.JavaClassReflector;
 
 /**
  * <p>
@@ -50,7 +48,6 @@ import com.clarionmedia.infinitum.reflection.impl.DefaultPackageReflector;
 public class GenericPointcutBuilder implements PointcutBuilder {
 
 	private ClassReflector mClassReflector;
-	private PackageReflector mPackageReflector;
 	private InfinitumAopContext mContext;
 	private BeanFactory mBeanFactory;
 
@@ -61,8 +58,7 @@ public class GenericPointcutBuilder implements PointcutBuilder {
 	 *            {@link InfinitumAopContext}
 	 */
 	public GenericPointcutBuilder(InfinitumAopContext context) {
-		mClassReflector = new DefaultClassReflector();
-		mPackageReflector = new DefaultPackageReflector();
+		mClassReflector = new JavaClassReflector();
 		mContext = context;
 		mBeanFactory = context.getBeanFactory();
 	}
@@ -181,7 +177,7 @@ public class GenericPointcutBuilder implements PointcutBuilder {
 			// Add method with the given arguments
 			Class<?>[] argTypes = new Class<?>[args.length];
 			for (int i = 0; i < args.length; i++) {
-				argTypes[i] = mPackageReflector.getClass(args[i].trim());
+				argTypes[i] = mClassReflector.getClass(args[i].trim());
 			}
 			Method method = mClassReflector.getMethod(beanObject.getClass(), methodName, argTypes);
 			if (method == null)
