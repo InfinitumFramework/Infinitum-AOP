@@ -28,6 +28,8 @@ import java.util.Set;
 
 import android.content.Context;
 
+import com.clarionmedia.infinitum.activity.EventSubscriber;
+import com.clarionmedia.infinitum.activity.LifecycleEvent;
 import com.clarionmedia.infinitum.aop.AspectDefinition;
 import com.clarionmedia.infinitum.aop.AspectDefinition.AdviceDefinition;
 import com.clarionmedia.infinitum.aop.AspectDefinition.AdviceDefinition.AdviceQualifier;
@@ -170,6 +172,16 @@ public class XmlInfinitumAopContext implements InfinitumAopContext {
 	@Override
 	public RestfulContext getRestContext() {
 		return mParentContext.getRestContext();
+	}
+	
+	@Override
+	public void publishEvent(LifecycleEvent event) {
+		mParentContext.publishEvent(event);
+	}
+	
+	@Override
+	public void subscribeForEvents(EventSubscriber subscriber) {
+		mParentContext.subscribeForEvents(subscriber);
 	}
 
 	private Set<AspectDefinition> transformAspects(Set<XmlBean> xmlComponents, Set<Class<?>> scannedAspects) {
