@@ -28,7 +28,6 @@ import java.util.Set;
 
 import android.content.Context;
 
-import com.clarionmedia.infinitum.activity.EventSubscriber;
 import com.clarionmedia.infinitum.activity.LifecycleEvent;
 import com.clarionmedia.infinitum.aop.AspectDefinition;
 import com.clarionmedia.infinitum.aop.AspectDefinition.AdviceDefinition;
@@ -52,6 +51,7 @@ import com.clarionmedia.infinitum.di.AbstractBeanDefinition;
 import com.clarionmedia.infinitum.di.BeanDefinitionBuilder;
 import com.clarionmedia.infinitum.di.BeanFactory;
 import com.clarionmedia.infinitum.di.XmlBean;
+import com.clarionmedia.infinitum.event.EventSubscriber;
 import com.clarionmedia.infinitum.internal.StringUtil;
 import com.clarionmedia.infinitum.reflection.ClassReflector;
 import com.clarionmedia.infinitum.reflection.impl.JavaClassReflector;
