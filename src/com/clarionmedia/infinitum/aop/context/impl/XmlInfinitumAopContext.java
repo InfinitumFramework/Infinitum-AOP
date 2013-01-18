@@ -50,6 +50,8 @@ import com.clarionmedia.infinitum.di.AbstractBeanDefinition;
 import com.clarionmedia.infinitum.di.BeanDefinitionBuilder;
 import com.clarionmedia.infinitum.di.BeanFactory;
 import com.clarionmedia.infinitum.di.XmlBean;
+import com.clarionmedia.infinitum.event.AbstractEvent;
+import com.clarionmedia.infinitum.event.EventSubscriber;
 import com.clarionmedia.infinitum.internal.StringUtil;
 import com.clarionmedia.infinitum.reflection.ClassReflector;
 import com.clarionmedia.infinitum.reflection.impl.JavaClassReflector;
@@ -170,6 +172,16 @@ public class XmlInfinitumAopContext implements InfinitumAopContext {
 	@Override
 	public RestfulContext getRestContext() {
 		return mParentContext.getRestContext();
+	}
+	
+	@Override
+	public void publishEvent(AbstractEvent event) {
+		mParentContext.publishEvent(event);
+	}
+	
+	@Override
+	public void subscribeForEvents(EventSubscriber subscriber) {
+		mParentContext.subscribeForEvents(subscriber);
 	}
 
 	private Set<AspectDefinition> transformAspects(Set<XmlBean> xmlComponents, Set<Class<?>> scannedAspects) {
