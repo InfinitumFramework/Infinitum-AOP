@@ -9,6 +9,8 @@ Infinitum AOP is used to separate cross-cutting concerns through aspect-oriented
 
 The AOP module also includes a cache abstraction. When enabled, methods can be marked for caching so that results can be retrieved without invoking the method on subsequent calls with the same arguments. This is particularly valuable for computation- or resource- intensive code.
 
+Infinitum AOP provides access to the event system, allowing events to be published when certain methods are invoked for consumption by registered subscribers.
+
 AOP Features
 ------------
 
@@ -17,3 +19,4 @@ AOP Features
 * Pointcuts: aspects can define pointcuts, which specify where advice should be applied
 * Configurable: aspects and advice can be defined through annotations or in XML
 * Cache abstraction: methods can be marked as cacheable so that subsequent calls with the same arguments need not be invoked
+* Event hooks: publish events to the event system when certain methods are invoked
