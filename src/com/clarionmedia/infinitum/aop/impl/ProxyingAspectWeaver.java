@@ -25,35 +25,39 @@ import com.clarionmedia.infinitum.aop.AspectDefinition;
 import com.clarionmedia.infinitum.aop.AspectWeaver;
 import com.clarionmedia.infinitum.aop.Pointcut;
 import com.clarionmedia.infinitum.aop.PointcutBuilder;
-import com.clarionmedia.infinitum.aop.context.InfinitumAopContext;
 import com.clarionmedia.infinitum.di.AbstractProxy;
 import com.clarionmedia.infinitum.di.BeanFactory;
 
 /**
  * <p>
- * Basic implementation of {@link AspectWeaver}.
+ * Implementation of of {@link AspectWeaver} which uses proxies to advise
+ * objects.
  * </p>
  * 
  * @author Tyler Treat
  * @version 1.0 12/28/12
  * @since 1.0
  */
-public class GenericAspectWeaver implements AspectWeaver {
+public class ProxyingAspectWeaver implements AspectWeaver {
 
 	private PointcutBuilder mPointcutBuilder;
 	private BeanFactory mBeanFactory;
 	private AdvisedProxyFactory mProxyFactory;
 
 	/**
-	 * Constructs a new {@code GenericAspectWeaver} instance.
+	 * Constructs a new {@code ProxyingAspectWeaver} instance.
 	 * 
 	 * @param beanFactory
 	 *            the {@link BeanFactory} the aspects are scoped to
+	 * @param pointcutBuilder
+	 *            {@link PointcutBuilder} to use
+	 * @param proxyFactory
+	 *            the {@link AdvisedProxyFactory} to use
 	 */
-	public GenericAspectWeaver(InfinitumAopContext context) {
-		mPointcutBuilder = new GenericPointcutBuilder(context);
-		mProxyFactory = new DelegatingAdvisedProxyFactory();
-		mBeanFactory = context.getBeanFactory();
+	public ProxyingAspectWeaver(BeanFactory beanFactory, PointcutBuilder pointcutBuilder, AdvisedProxyFactory proxyFactory) {
+		mPointcutBuilder = pointcutBuilder;
+		mProxyFactory = proxyFactory;
+		mBeanFactory = beanFactory;
 	}
 
 	@Override

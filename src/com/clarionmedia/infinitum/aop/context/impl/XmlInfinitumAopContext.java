@@ -40,8 +40,10 @@ import com.clarionmedia.infinitum.aop.annotation.Cache;
 import com.clarionmedia.infinitum.aop.annotation.EvictCache;
 import com.clarionmedia.infinitum.aop.context.InfinitumAopContext;
 import com.clarionmedia.infinitum.aop.impl.CacheAspect;
+import com.clarionmedia.infinitum.aop.impl.DelegatingAdvisedProxyFactory;
 import com.clarionmedia.infinitum.aop.impl.GenericAspectTransformer;
-import com.clarionmedia.infinitum.aop.impl.GenericAspectWeaver;
+import com.clarionmedia.infinitum.aop.impl.ProxyingAspectWeaver;
+import com.clarionmedia.infinitum.aop.impl.GenericPointcutBuilder;
 import com.clarionmedia.infinitum.context.InfinitumContext;
 import com.clarionmedia.infinitum.context.RestfulContext;
 import com.clarionmedia.infinitum.context.impl.XmlApplicationContext;
@@ -99,7 +101,8 @@ public class XmlInfinitumAopContext implements InfinitumAopContext {
 			addCachingAdvice(aspects);
 
 		// Process aspects
-		new GenericAspectWeaver(this).weave(context, aspects);
+		new ProxyingAspectWeaver(getBeanFactory(), new GenericPointcutBuilder(this), new DelegatingAdvisedProxyFactory()).weave(context,
+				aspects);
 	}
 
 	@Override
@@ -163,7 +166,7 @@ public class XmlInfinitumAopContext implements InfinitumAopContext {
 	public InfinitumContext getParentContext() {
 		return mParentContext;
 	}
-	
+
 	@Override
 	public <T extends InfinitumContext> T getChildContext(Class<T> contextType) {
 		return mParentContext.getChildContext(contextType);
@@ -173,12 +176,12 @@ public class XmlInfinitumAopContext implements InfinitumAopContext {
 	public RestfulContext getRestContext() {
 		return mParentContext.getRestContext();
 	}
-	
+
 	@Override
 	public void publishEvent(AbstractEvent event) {
 		mParentContext.publishEvent(event);
 	}
-	
+
 	@Override
 	public void subscribeForEvents(EventSubscriber subscriber) {
 		mParentContext.subscribeForEvents(subscriber);
@@ -221,7 +224,7 @@ public class XmlInfinitumAopContext implements InfinitumAopContext {
 		cachingAspect.setName(StringUtil.toCamelCase(CacheAspect.class.getSimpleName()));
 		cachingAspect.setType(CacheAspect.class);
 		List<AdviceDefinition> adviceList = new ArrayList<AdviceDefinition>();
-		
+
 		// Create Cache advice
 		AdviceDefinition cacheAdvice = new AdviceDefinition();
 		cacheAdvice.setType(AdviceLocation.Around);
@@ -236,7 +239,7 @@ public class XmlInfinitumAopContext implements InfinitumAopContext {
 			}
 		});
 		adviceList.add(cacheAdvice);
-		
+
 		// Create EvictCache advice
 		AdviceDefinition evictCacheAdvice = new AdviceDefinition();
 		evictCacheAdvice.setType(AdviceLocation.Before);
@@ -251,7 +254,7 @@ public class XmlInfinitumAopContext implements InfinitumAopContext {
 			}
 		});
 		adviceList.add(evictCacheAdvice);
-		
+
 		cachingAspect.setAdvice(adviceList);
 		aspects.add(cachingAspect);
 	}
