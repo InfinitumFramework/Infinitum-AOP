@@ -9,7 +9,7 @@ Infinitum AOP is used to separate cross-cutting concerns through aspect-oriented
 
 The AOP module also includes a cache abstraction. When enabled, methods can be marked for caching so that results can be retrieved without invoking the method on subsequent calls with the same arguments. This is particularly valuable for computation- or resource- intensive code.
 
-Infinitum AOP provides access to the event system, allowing events to be published when certain methods are invoked for consumption by registered subscribers.
+Infinitum AOP provides access to the event framework, allowing events to be published for consumption by registered subscribers when certain methods are invoked.
 
 AOP Features
 ------------
