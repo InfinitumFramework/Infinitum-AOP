@@ -29,10 +29,6 @@ import com.clarionmedia.infinitum.aop.JoinPoint;
  * {@link JoinPoint} completes. The {@code JoinPoint} itself will be passed as an argument
  * to methods annotated with this.
  * </p>
- * <p>
- * This advice does not have the ability to halt execution flow proceeding to
- * the join point unless it throws an exception.
- * </p>
  * 
  * @author Tyler Treat
  * @version 1.0 07/12/12
