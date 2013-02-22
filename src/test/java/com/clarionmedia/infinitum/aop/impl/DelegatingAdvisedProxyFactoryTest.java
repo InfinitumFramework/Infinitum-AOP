@@ -16,8 +16,7 @@
 
 package com.clarionmedia.infinitum.aop.impl;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 
@@ -44,14 +43,14 @@ public class DelegatingAdvisedProxyFactoryTest {
 	public void testCreateProxy_dexMakerProxy() {
 		AbstractProxy proxy = proxyFactory.createProxy(Robolectric.application, new Object(), new Pointcut("someBean",
 				Object.class));
-		assertThat(proxy, is(AdvisedDexMakerProxy.class));
+		assertEquals(proxy.getClass(), AdvisedDexMakerProxy.class);
 	}
 
 	@Test
 	public void testCreateProxy_jdkDynamicProxy() {
 		AbstractProxy proxy = proxyFactory.createProxy(Robolectric.application, new ArrayList<String>(), new Pointcut(
 				"someBean", ArrayList.class));
-		assertThat(proxy, is(AdvisedJdkDynamicProxy.class));
+		assertEquals(proxy.getClass(), AdvisedJdkDynamicProxy.class);
 	}
 
 }

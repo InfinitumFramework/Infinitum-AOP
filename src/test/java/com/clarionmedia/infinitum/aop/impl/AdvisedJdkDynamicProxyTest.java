@@ -16,10 +16,9 @@
 
 package com.clarionmedia.infinitum.aop.impl;
 
-import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -87,7 +86,7 @@ public class AdvisedJdkDynamicProxyTest {
 
 		// Verify
 		assertNotNull("Proxy should have returned target value", result);
-		assertThat("Proxy should have returned target value", result, is(String.class));
+		assertEquals("Proxy should have returned target value", result.getClass(), String.class);
 		assertTrue("Proxy should have returned target value", result.equals("[hello]"));
 
 	}
@@ -111,7 +110,7 @@ public class AdvisedJdkDynamicProxyTest {
 		// Verify
 		verify(mockJoinPoint, times(0)).invoke();
 		assertNotNull("Proxy should have returned target value", result);
-		assertThat("Proxy should have returned target value", result, is(String.class));
+		assertEquals("Proxy should have returned target value", result.getClass(), String.class);
 		assertTrue("Proxy should have returned target value", result.equals("[hello]"));
 	}
 
@@ -134,7 +133,7 @@ public class AdvisedJdkDynamicProxyTest {
 		// Verify
 		verify(mockJoinPoint).invoke();
 		assertNotNull("Proxy should have returned target value", result);
-		assertThat("Proxy should have returned target value", result, is(String.class));
+		assertEquals("Proxy should have returned target value", result.getClass(), String.class);
 		assertTrue("Proxy should have returned target value", result.equals("[hello]"));
 
 	}
@@ -157,7 +156,7 @@ public class AdvisedJdkDynamicProxyTest {
 		// Verify
 		verify(mockJoinPoint).invoke();
 		assertNotNull("Proxy should have returned target value", result);
-		assertThat("Proxy should have returned target value", result, is(String.class));
+		assertEquals("Proxy should have returned target value", result.getClass(), String.class);
 		assertTrue("Proxy should have returned target value", result.equals("[hello]"));
 
 	}
@@ -181,7 +180,7 @@ public class AdvisedJdkDynamicProxyTest {
 		// Verify
 		verify(mockProceedingJoinPoint).invoke();
 		assertNotNull("Proxy should have returned target value", result);
-		assertThat("Proxy should have returned target value", result, is(String.class));
+		assertEquals("Proxy should have returned target value", result.getClass(), String.class);
 		assertTrue("Proxy should have returned target value", result.equals("[hello]"));
 
 	}
