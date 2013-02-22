@@ -4,7 +4,7 @@
 	<artifactId>infinitum-aop</artifactId>
 	<packaging>apklib</packaging>
 	<name>Infinitum AOP</name>
-	<version>1.0.2-SNAPSHOT</version>
+	<version>1.0.2</version>
 	<description>Infinitum AOP framework module</description>
 	<url>http://infinitumframework.com</url>
 
