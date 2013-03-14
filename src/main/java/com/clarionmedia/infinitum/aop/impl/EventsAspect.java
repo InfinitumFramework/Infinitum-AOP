@@ -41,7 +41,7 @@ public class EventsAspect {
      * Publishes a framework event if the method is annotated with {@link Event} after it's invoked.
      */
     @After
-    private void publishEvent(JoinPoint joinPoint) {
+    public void publishEvent(JoinPoint joinPoint) {
         Event anno = joinPoint.getMethod().getAnnotation(Event.class);
         if (anno == null)
             return;
