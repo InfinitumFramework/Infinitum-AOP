@@ -70,11 +70,12 @@ public class XmlInfinitumAopContext implements InfinitumAopContext {
 	private XmlApplicationContext mParentContext;
 	private List<InfinitumContext> mChildContexts;
 	private Map<String, Map<Integer, Object>> mMethodCache;
+    private ClassReflector mClassReflector;
 
 	/**
 	 * Creates a new {@code XmlInfinitumAopContext} instance as a child of the
 	 * given {@link XmlApplicationContext}.
-	 * 
+	 *
 	 * @param parentContext
 	 *            the parent of this context
 	 */
@@ -82,6 +83,7 @@ public class XmlInfinitumAopContext implements InfinitumAopContext {
 		mParentContext = parentContext;
 		mChildContexts = new ArrayList<InfinitumContext>();
 		mMethodCache = new HashMap<String, Map<Integer, Object>>();
+        mClassReflector = new JavaClassReflector();
 	}
 
 	@Override
@@ -96,6 +98,10 @@ public class XmlInfinitumAopContext implements InfinitumAopContext {
 		// Add caching advice for cache abstraction
 		if (isCacheAbstractionEnabled())
 			addCachingAdvice(aspects);
+
+        // Add events advice for event framework
+        if (isEventsEnabled())
+            addEventsAdvice(aspects);
 
 		// Process aspects
 		new ProxyingAspectWeaver(getBeanFactory(), new GenericPointcutBuilder(this), new DelegatingAdvisedProxyFactory()).weave(context,
@@ -223,7 +229,6 @@ public class XmlInfinitumAopContext implements InfinitumAopContext {
 	}
 
 	private void addCachingAdvice(Set<AspectDefinition> aspects) {
-		final ClassReflector reflector = new JavaClassReflector();
 		AspectDefinition cachingAspect = new AspectDefinition();
 		cachingAspect.setName(StringUtil.toCamelCase(CacheAspect.class.getSimpleName()));
 		cachingAspect.setType(CacheAspect.class);
@@ -234,12 +239,12 @@ public class XmlInfinitumAopContext implements InfinitumAopContext {
 		cacheAdvice.setType(AdviceLocation.Around);
 		cacheAdvice.setPointcutType("within");
 		cacheAdvice.setPointcutValue(new String[] { "*" });
-		Method method = reflector.getMethod(CacheAspect.class, "cache", ProceedingJoinPoint.class);
+		Method method = mClassReflector.getMethod(CacheAspect.class, "cache", ProceedingJoinPoint.class);
 		cacheAdvice.setMethod(method);
 		cacheAdvice.setQualifier(new AdviceQualifier() {
 			@Override
 			public boolean qualifies(Class<?> clazz) {
-				return reflector.containsMethodAnnotation(clazz, Cache.class);
+				return mClassReflector.containsMethodAnnotation(clazz, Cache.class);
 			}
 		});
 		adviceList.add(cacheAdvice);
@@ -249,12 +254,12 @@ public class XmlInfinitumAopContext implements InfinitumAopContext {
 		evictCacheAdvice.setType(AdviceLocation.Before);
 		evictCacheAdvice.setPointcutType("within");
 		evictCacheAdvice.setPointcutValue(new String[] { "*" });
-		method = reflector.getMethod(CacheAspect.class, "evictCache", JoinPoint.class);
+		method = mClassReflector.getMethod(CacheAspect.class, "evictCache", JoinPoint.class);
 		evictCacheAdvice.setMethod(method);
 		evictCacheAdvice.setQualifier(new AdviceQualifier() {
 			@Override
 			public boolean qualifies(Class<?> clazz) {
-				return reflector.containsMethodAnnotation(clazz, EvictCache.class);
+				return mClassReflector.containsMethodAnnotation(clazz, EvictCache.class);
 			}
 		});
 		adviceList.add(evictCacheAdvice);
@@ -262,5 +267,30 @@ public class XmlInfinitumAopContext implements InfinitumAopContext {
 		cachingAspect.setAdvice(adviceList);
 		aspects.add(cachingAspect);
 	}
+
+    private void addEventsAdvice(Set<AspectDefinition> aspects) {
+        AspectDefinition eventsAspect = new AspectDefinition();
+        eventsAspect.setName(StringUtil.toCamelCase(EventsAspect.class.getSimpleName()));
+        eventsAspect.setType(EventsAspect.class);
+        List<AdviceDefinition> adviceList = new ArrayList<AdviceDefinition>();
+
+        // Create Event advice
+        AdviceDefinition eventAdvice = new AdviceDefinition();
+        eventAdvice.setType(AdviceLocation.After);
+        eventAdvice.setPointcutType("within");
+        eventAdvice.setPointcutValue(new String[]{"*"});
+        Method method = mClassReflector.getMethod(EventsAspect.class, "publishEvent", JoinPoint.class);
+        eventAdvice.setMethod(method);
+        eventAdvice.setQualifier(new AdviceQualifier() {
+            @Override
+            public boolean qualifies(Class<?> clazz) {
+                return mClassReflector.containsMethodAnnotation(clazz, Event.class);
+            }
+        });
+        adviceList.add(eventAdvice);
+
+        eventsAspect.setAdvice(adviceList);
+        aspects.add(eventsAspect);
+    }
 
 }
