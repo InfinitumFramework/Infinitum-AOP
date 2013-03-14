@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2012 Clarion Media, LLC
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,11 +39,7 @@ import com.clarionmedia.infinitum.aop.annotation.Aspect;
 import com.clarionmedia.infinitum.aop.annotation.Cache;
 import com.clarionmedia.infinitum.aop.annotation.EvictCache;
 import com.clarionmedia.infinitum.aop.context.InfinitumAopContext;
-import com.clarionmedia.infinitum.aop.impl.CacheAspect;
-import com.clarionmedia.infinitum.aop.impl.DelegatingAdvisedProxyFactory;
-import com.clarionmedia.infinitum.aop.impl.GenericAspectTransformer;
-import com.clarionmedia.infinitum.aop.impl.ProxyingAspectWeaver;
-import com.clarionmedia.infinitum.aop.impl.GenericPointcutBuilder;
+import com.clarionmedia.infinitum.aop.impl.*;
 import com.clarionmedia.infinitum.context.InfinitumContext;
 import com.clarionmedia.infinitum.context.RestfulContext;
 import com.clarionmedia.infinitum.context.impl.XmlApplicationContext;
@@ -54,6 +50,7 @@ import com.clarionmedia.infinitum.di.BeanFactory;
 import com.clarionmedia.infinitum.di.XmlBean;
 import com.clarionmedia.infinitum.event.AbstractEvent;
 import com.clarionmedia.infinitum.event.EventSubscriber;
+import com.clarionmedia.infinitum.event.annotation.Event;
 import com.clarionmedia.infinitum.internal.StringUtil;
 import com.clarionmedia.infinitum.reflection.ClassReflector;
 import com.clarionmedia.infinitum.reflection.impl.JavaClassReflector;
@@ -63,9 +60,9 @@ import com.clarionmedia.infinitum.reflection.impl.JavaClassReflector;
  * Implementation of {@link InfinitumAopContext} which is initialized through
  * XML as a child of an {@link XmlApplicationContext} instance.
  * </p>
- * 
+ *
  * @author Tyler Treat
- * @version 1.0 12/24/12
+ * @version 1.0.4 03/13/13
  * @since 1.0
  */
 public class XmlInfinitumAopContext implements InfinitumAopContext {
@@ -122,7 +119,14 @@ public class XmlInfinitumAopContext implements InfinitumAopContext {
 		return mMethodCache;
 	}
 
-	@Override
+    @Override
+    public boolean isEventsEnabled() {
+        if (mParentContext.getAppConfig().containsKey("events"))
+            return Boolean.parseBoolean(mParentContext.getAppConfig().get("events"));
+        return false;
+    }
+
+    @Override
 	public boolean isDebug() {
 		return mParentContext.isDebug();
 	}
