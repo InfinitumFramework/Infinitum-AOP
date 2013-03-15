@@ -16,18 +16,7 @@
 
 package com.clarionmedia.infinitum.aop.context.impl;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import android.content.Context;
-
 import com.clarionmedia.infinitum.aop.AspectDefinition;
 import com.clarionmedia.infinitum.aop.AspectDefinition.AdviceDefinition;
 import com.clarionmedia.infinitum.aop.AspectDefinition.AdviceDefinition.AdviceQualifier;
@@ -54,6 +43,9 @@ import com.clarionmedia.infinitum.event.annotation.Event;
 import com.clarionmedia.infinitum.internal.StringUtil;
 import com.clarionmedia.infinitum.reflection.ClassReflector;
 import com.clarionmedia.infinitum.reflection.impl.JavaClassReflector;
+
+import java.lang.reflect.Method;
+import java.util.*;
 
 /**
  * <p>
