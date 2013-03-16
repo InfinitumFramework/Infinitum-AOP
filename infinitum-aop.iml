@@ -59,7 +59,7 @@
     <orderEntry type="library" scope="TEST" name="Maven: org.apache.httpcomponents:httpclient:4.0.3" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.apache.httpcomponents:httpcore:4.0.1" level="project" />
     <orderEntry type="library" name="Maven: com.google.android:support-v4:r6" level="project" />
-    <orderEntry type="library" name="Maven: com.infinitumframework:infinitum-core:1.0.4" level="project" />
+    <orderEntry type="library" name="Maven: com.infinitumframework:infinitum-core:1.0.5" level="project" />
     <orderEntry type="library" name="Maven: com.google.dexmaker:dexmaker:1.0" level="project" />
     <orderEntry type="library" name="Maven: org.simpleframework:simple-xml:2.6.9" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.google.android:android:1.6_r2" level="project" />
@@ -68,5 +68,5 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: xpp3:xpp3:1.1.4c" level="project" />
     <orderEntry type="jdk" jdkName="Android 1.6 Platform" jdkType="Android SDK" />
   </component>
-</module> 
+</module>
 
