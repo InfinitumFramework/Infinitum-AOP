@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2012 Clarion Media, LLC
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,18 +16,7 @@
 
 package com.clarionmedia.infinitum.aop.context.impl;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import android.content.Context;
-
 import com.clarionmedia.infinitum.aop.AspectDefinition;
 import com.clarionmedia.infinitum.aop.AspectDefinition.AdviceDefinition;
 import com.clarionmedia.infinitum.aop.AspectDefinition.AdviceDefinition.AdviceQualifier;
@@ -39,11 +28,7 @@ import com.clarionmedia.infinitum.aop.annotation.Aspect;
 import com.clarionmedia.infinitum.aop.annotation.Cache;
 import com.clarionmedia.infinitum.aop.annotation.EvictCache;
 import com.clarionmedia.infinitum.aop.context.InfinitumAopContext;
-import com.clarionmedia.infinitum.aop.impl.CacheAspect;
-import com.clarionmedia.infinitum.aop.impl.DelegatingAdvisedProxyFactory;
-import com.clarionmedia.infinitum.aop.impl.GenericAspectTransformer;
-import com.clarionmedia.infinitum.aop.impl.ProxyingAspectWeaver;
-import com.clarionmedia.infinitum.aop.impl.GenericPointcutBuilder;
+import com.clarionmedia.infinitum.aop.impl.*;
 import com.clarionmedia.infinitum.context.InfinitumContext;
 import com.clarionmedia.infinitum.context.RestfulContext;
 import com.clarionmedia.infinitum.context.impl.XmlApplicationContext;
@@ -54,18 +39,22 @@ import com.clarionmedia.infinitum.di.BeanFactory;
 import com.clarionmedia.infinitum.di.XmlBean;
 import com.clarionmedia.infinitum.event.AbstractEvent;
 import com.clarionmedia.infinitum.event.EventSubscriber;
+import com.clarionmedia.infinitum.event.annotation.Event;
 import com.clarionmedia.infinitum.internal.StringUtil;
 import com.clarionmedia.infinitum.reflection.ClassReflector;
 import com.clarionmedia.infinitum.reflection.impl.JavaClassReflector;
+
+import java.lang.reflect.Method;
+import java.util.*;
 
 /**
  * <p>
  * Implementation of {@link InfinitumAopContext} which is initialized through
  * XML as a child of an {@link XmlApplicationContext} instance.
  * </p>
- * 
+ *
  * @author Tyler Treat
- * @version 1.0 12/24/12
+ * @version 1.0.4 03/13/13
  * @since 1.0
  */
 public class XmlInfinitumAopContext implements InfinitumAopContext {
@@ -73,11 +62,12 @@ public class XmlInfinitumAopContext implements InfinitumAopContext {
 	private XmlApplicationContext mParentContext;
 	private List<InfinitumContext> mChildContexts;
 	private Map<String, Map<Integer, Object>> mMethodCache;
+    private ClassReflector mClassReflector;
 
 	/**
 	 * Creates a new {@code XmlInfinitumAopContext} instance as a child of the
 	 * given {@link XmlApplicationContext}.
-	 * 
+	 *
 	 * @param parentContext
 	 *            the parent of this context
 	 */
@@ -85,6 +75,7 @@ public class XmlInfinitumAopContext implements InfinitumAopContext {
 		mParentContext = parentContext;
 		mChildContexts = new ArrayList<InfinitumContext>();
 		mMethodCache = new HashMap<String, Map<Integer, Object>>();
+        mClassReflector = new JavaClassReflector();
 	}
 
 	@Override
@@ -99,6 +90,10 @@ public class XmlInfinitumAopContext implements InfinitumAopContext {
 		// Add caching advice for cache abstraction
 		if (isCacheAbstractionEnabled())
 			addCachingAdvice(aspects);
+
+        // Add events advice for event framework
+        if (isEventsEnabled())
+            addEventsAdvice(aspects);
 
 		// Process aspects
 		new ProxyingAspectWeaver(getBeanFactory(), new GenericPointcutBuilder(this), new DelegatingAdvisedProxyFactory()).weave(context,
@@ -122,7 +117,14 @@ public class XmlInfinitumAopContext implements InfinitumAopContext {
 		return mMethodCache;
 	}
 
-	@Override
+    @Override
+    public boolean isEventsEnabled() {
+        if (mParentContext.getAppConfig().containsKey("events"))
+            return Boolean.parseBoolean(mParentContext.getAppConfig().get("events"));
+        return false;
+    }
+
+    @Override
 	public boolean isDebug() {
 		return mParentContext.isDebug();
 	}
@@ -219,7 +221,6 @@ public class XmlInfinitumAopContext implements InfinitumAopContext {
 	}
 
 	private void addCachingAdvice(Set<AspectDefinition> aspects) {
-		final ClassReflector reflector = new JavaClassReflector();
 		AspectDefinition cachingAspect = new AspectDefinition();
 		cachingAspect.setName(StringUtil.toCamelCase(CacheAspect.class.getSimpleName()));
 		cachingAspect.setType(CacheAspect.class);
@@ -230,12 +231,12 @@ public class XmlInfinitumAopContext implements InfinitumAopContext {
 		cacheAdvice.setType(AdviceLocation.Around);
 		cacheAdvice.setPointcutType("within");
 		cacheAdvice.setPointcutValue(new String[] { "*" });
-		Method method = reflector.getMethod(CacheAspect.class, "cache", ProceedingJoinPoint.class);
+		Method method = mClassReflector.getMethod(CacheAspect.class, "cache", ProceedingJoinPoint.class);
 		cacheAdvice.setMethod(method);
 		cacheAdvice.setQualifier(new AdviceQualifier() {
 			@Override
 			public boolean qualifies(Class<?> clazz) {
-				return reflector.containsMethodAnnotation(clazz, Cache.class);
+				return mClassReflector.containsMethodAnnotation(clazz, Cache.class);
 			}
 		});
 		adviceList.add(cacheAdvice);
@@ -245,12 +246,12 @@ public class XmlInfinitumAopContext implements InfinitumAopContext {
 		evictCacheAdvice.setType(AdviceLocation.Before);
 		evictCacheAdvice.setPointcutType("within");
 		evictCacheAdvice.setPointcutValue(new String[] { "*" });
-		method = reflector.getMethod(CacheAspect.class, "evictCache", JoinPoint.class);
+		method = mClassReflector.getMethod(CacheAspect.class, "evictCache", JoinPoint.class);
 		evictCacheAdvice.setMethod(method);
 		evictCacheAdvice.setQualifier(new AdviceQualifier() {
 			@Override
 			public boolean qualifies(Class<?> clazz) {
-				return reflector.containsMethodAnnotation(clazz, EvictCache.class);
+				return mClassReflector.containsMethodAnnotation(clazz, EvictCache.class);
 			}
 		});
 		adviceList.add(evictCacheAdvice);
@@ -258,5 +259,30 @@ public class XmlInfinitumAopContext implements InfinitumAopContext {
 		cachingAspect.setAdvice(adviceList);
 		aspects.add(cachingAspect);
 	}
+
+    private void addEventsAdvice(Set<AspectDefinition> aspects) {
+        AspectDefinition eventsAspect = new AspectDefinition();
+        eventsAspect.setName(StringUtil.toCamelCase(EventsAspect.class.getSimpleName()));
+        eventsAspect.setType(EventsAspect.class);
+        List<AdviceDefinition> adviceList = new ArrayList<AdviceDefinition>();
+
+        // Create Event advice
+        AdviceDefinition eventAdvice = new AdviceDefinition();
+        eventAdvice.setType(AdviceLocation.After);
+        eventAdvice.setPointcutType("within");
+        eventAdvice.setPointcutValue(new String[]{"*"});
+        Method method = mClassReflector.getMethod(EventsAspect.class, "publishEvent", JoinPoint.class);
+        eventAdvice.setMethod(method);
+        eventAdvice.setQualifier(new AdviceQualifier() {
+            @Override
+            public boolean qualifies(Class<?> clazz) {
+                return mClassReflector.containsMethodAnnotation(clazz, Event.class);
+            }
+        });
+        adviceList.add(eventAdvice);
+
+        eventsAspect.setAdvice(adviceList);
+        aspects.add(eventsAspect);
+    }
 
 }

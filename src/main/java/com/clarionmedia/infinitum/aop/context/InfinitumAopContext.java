@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2012 Clarion Media, LLC
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,25 +26,32 @@ import com.clarionmedia.infinitum.di.BeanProvider;
  * {@code InfinitumAopContext} is an extension of {@link InfinitumContext} that
  * contains configuration information for the framework AOP module.
  * </p>
- * 
+ *
  * @author Tyler Treat
- * @version 1.0 12/24/12
+ * @version 1.0.4 03/13/13
  * @since 1.0
  */
 public interface InfinitumAopContext extends InfinitumContext, BeanProvider {
 
-	/**
-	 * Indicates if cache abstraction is enabled.
-	 * 
-	 * @return {@code true} if enabled, {@code false} if not
-	 */
-	boolean isCacheAbstractionEnabled();
+    /**
+     * Indicates if cache abstraction is enabled.
+     *
+     * @return {@code true} if enabled, {@code false} if not
+     */
+    boolean isCacheAbstractionEnabled();
 
-	/**
-	 * Retrieves the method cache used for cache abstraction.
-	 * 
-	 * @return method cache
-	 */
-	Map<String, Map<Integer, Object>> getMethodCache();
+    /**
+     * Retrieves the method cache used for cache abstraction.
+     *
+     * @return method cache
+     */
+    Map<String, Map<Integer, Object>> getMethodCache();
+
+    /**
+     * Indicates if the event framework is enabled.
+     *
+     * @return {@code true} if enabled, {@code false} if not
+     */
+    boolean isEventsEnabled();
 
 }
