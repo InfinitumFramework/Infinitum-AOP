@@ -4,7 +4,7 @@
 	<artifactId>infinitum-aop</artifactId>
 	<packaging>jar</packaging>
 	<name>Infinitum AOP</name>
-	<version>1.0.6-SNAPSHOT</version>
+	<version>1.0.6</version>
 	<description>Infinitum AOP framework module</description>
 	<url>http://infinitumframework.com</url>
 
@@ -222,7 +222,7 @@
 										</goals>
 									</pluginExecutionFilter>
 									<action>
-										<ignore></ignore>
+										<ignore />
 									</action>
 								</pluginExecution>
 							</pluginExecutions>
