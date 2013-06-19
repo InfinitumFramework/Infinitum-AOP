@@ -21,7 +21,6 @@
       <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/test/java" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/target/apidocs" />
-      <excludeFolder url="file://$MODULE_DIR$/target/checkout" />
       <excludeFolder url="file://$MODULE_DIR$/target/classes" />
       <excludeFolder url="file://$MODULE_DIR$/target/javadoc-bundle-options" />
       <excludeFolder url="file://$MODULE_DIR$/target/maven-archiver" />
