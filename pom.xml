@@ -4,7 +4,7 @@
 	<artifactId>infinitum-aop</artifactId>
 	<packaging>jar</packaging>
 	<name>Infinitum AOP</name>
-	<version>1.1.0.1</version>
+	<version>1.1.1-SNAPSHOT</version>
 	<description>Infinitum AOP framework module</description>
 	<url>http://infinitumframework.com</url>
 
