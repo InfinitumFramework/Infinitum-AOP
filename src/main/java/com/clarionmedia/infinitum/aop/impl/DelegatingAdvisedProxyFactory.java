@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Clarion Media, LLC
+ * Copyright (C) 2013 Clarion Media, LLC
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,28 +23,28 @@ import com.clarionmedia.infinitum.aop.Pointcut;
 import com.clarionmedia.infinitum.di.AbstractProxy;
 
 /**
- * <p>
- * {@link AdvisedProxyFactory} which creates {@link AbstractProxy} instances by
- * determining the best implementation to use.
- * {@code DelegatingAdvisedProxyFactory} will use {@link AdvisedDexMakerProxy}
- * to proxy non-final classes and {@link AdvisedJdkDynamicProxy} to proxy
- * interfaces.
- * </p>
- * 
+ * <p> {@link AdvisedProxyFactory} which creates {@link AbstractProxy} instances by determining the best implementation
+ * to use. {@code DelegatingAdvisedProxyFactory} will use {@link AdvisedDexMakerProxy} to proxy non-final classes and
+ * {@link AdvisedJdkDynamicProxy} to proxy interfaces. </p>
+ *
  * @author Tyler Treat
- * @version 1.0 07/14/12
+ * @version 1.1.0.1 07/22/13
  * @since 1.0
  */
 public class DelegatingAdvisedProxyFactory implements AdvisedProxyFactory {
 
-	@Override
-	public AbstractProxy createProxy(Context context, Object object,
-			Pointcut pointcut) {
-		Class<?> clazz = object.getClass();
-		Class<?>[] interfaces = clazz.getInterfaces();
-		if (interfaces.length > 0)
-			return new AdvisedJdkDynamicProxy(object, pointcut, interfaces);
-		return new AdvisedDexMakerProxy(context, object, pointcut);
-	}
+    @Override
+    public AbstractProxy createProxy(Context context, Object object, Pointcut pointcut) {
+        return createProxy(context, object, pointcut, false);
+    }
+
+    @Override
+    public AbstractProxy createProxy(Context context, Object object, Pointcut pointcut, boolean bytecodeInstrumented) {
+        Class<?> clazz = object.getClass();
+        Class<?>[] interfaces = clazz.getInterfaces();
+        if (interfaces.length > 0 && !bytecodeInstrumented)
+            return new AdvisedJdkDynamicProxy(object, pointcut, interfaces);
+        return new AdvisedDexMakerProxy(context, object, pointcut);
+    }
 
 }
